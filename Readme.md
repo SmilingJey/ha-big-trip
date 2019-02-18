@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Артём Евсяков](https://up.htmlacademy.ru/ecmascript/8/user/637603).
-* Наставник: `Неизвестно`.
+* Наставник: [Александр Александров](https://htmlacademy.ru/profile/id935163).
 
 ---
 
