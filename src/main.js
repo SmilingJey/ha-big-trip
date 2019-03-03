@@ -1,7 +1,10 @@
-import {randomInteger, removeChilds} from './utils.js';
 import createFilterElement from './filter.js';
-import createTripPointElement from './trip-point.js';
+import createMockTripPoint from './mock-trip-point.js';
+import renderTripPoints from './render-trip-points.js';
 
+/**
+ * Отображение фильтров
+ */
 function renderFilters() {
   const filterDefinitions = [
     {
@@ -37,21 +40,12 @@ function renderFilters() {
 
 renderFilters();
 
-
-const tripPointsContainerElement = document.querySelector(`.trip-day__items`);
-
 /**
- * Функция отображает случайное количество точек маршрута
+ * Отображение точек маршрута
  */
 function showTripPoints() {
-  removeChilds(tripPointsContainerElement);
-  const tripPointCount = randomInteger(10);
-  const tasksFragment = document.createDocumentFragment();
-  for (let i = 0; i <= tripPointCount; i++) {
-    tasksFragment.appendChild(createTripPointElement());
-  }
-
-  tripPointsContainerElement.appendChild(tasksFragment);
+  const tripPoints = Array(10).fill().map(createMockTripPoint);
+  renderTripPoints(tripPoints);
 }
 
 showTripPoints();
