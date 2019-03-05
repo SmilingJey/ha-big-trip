@@ -40,21 +40,13 @@ function calcDaysDiff(startDate, endDate) {
  */
 function calcDurationString(startDate, endDate) {
   const MSEC_IN_HOUR = 60 * 60 * 1000;
-  const MSEC_IN_DAY = 24 * MSEC_IN_HOUR;
 
   const dateDiff = moment(endDate).diff(moment(startDate));
 
-  let diffFormat = `mm[M]`;
-  if (dateDiff >= MSEC_IN_HOUR) {
-    diffFormat = `H[H] mm[M]`;
-  }
-  let durationText = moment(dateDiff).utc().format(diffFormat);
-
-  if (dateDiff >= MSEC_IN_DAY) {
-    const days = moment(endDate).diff(moment(startDate), `days`);
-    durationText = `${days}D ${durationText}`;
-  }
-
+  const diffFormat = (dateDiff >= MSEC_IN_HOUR) ? `H[H] mm[M]` : `mm[M]`;
+  const durationHoursAndMinute = moment(dateDiff).utc().format(diffFormat);
+  const durationDays = moment(endDate).diff(moment(startDate), `days`);
+  const durationText = durationDays ? `${durationDays}D ${durationHoursAndMinute}` : durationHoursAndMinute;
   return durationText;
 }
 

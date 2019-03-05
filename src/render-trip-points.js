@@ -12,13 +12,13 @@ const tripDayTemplate = document.querySelector(`#trip-day-template`);
  * @return {Node} - элемент дня путешествия
  */
 function createTripDayElement(date, tripStartDate) {
-  const tripDayElement = tripDayTemplate.content.cloneNode(true);
-  const dayNumberElement = tripDayElement.querySelector(`.trip-day__number`);
+  const dayElement = tripDayTemplate.content.querySelector(`.trip-day`).cloneNode(true);
+  const dayNumberElement = dayElement.querySelector(`.trip-day__number`);
   const dayNumber = calcDaysDiff(tripStartDate, date) + 1;
   dayNumberElement.textContent = dayNumber;
-  const dayTitleElement = tripDayElement.querySelector(`.trip-day__title`);
+  const dayTitleElement = dayElement.querySelector(`.trip-day__title`);
   dayTitleElement.textContent = moment(date).format(`MMM D`);
-  return tripDayElement;
+  return dayElement;
 }
 
 /**
@@ -48,13 +48,14 @@ function renderTripPoints(tripPoints) {
   const tripPointsFragment = document.createDocumentFragment();
   const orderedTripPoints = tripPoints.sort(compareTripPointDate);
   const tripStartDate = orderedTripPoints[0].startDate;
-  let prevTripPointDate = tripStartDate;
-  let dayElement = createTripDayElement(prevTripPointDate, tripStartDate);
+
+  let prevTripPointDate = 0;
+  let dayElement;
 
   for (const tripPoint of orderedTripPoints) {
     if (calcDaysDiff(prevTripPointDate, tripPoint.startDate) !== 0) {
-      tripPointsFragment.appendChild(dayElement);
       dayElement = createTripDayElement(tripPoint.startDate, tripStartDate);
+      tripPointsFragment.appendChild(dayElement);
     }
 
     const tripPointElement = createTripPointElement(tripPoint);
@@ -62,7 +63,6 @@ function renderTripPoints(tripPoints) {
     prevTripPointDate = tripPoint.startDate;
   }
 
-  tripPointsFragment.appendChild(dayElement);
   tripPointsContainerElement.appendChild(tripPointsFragment);
 }
 

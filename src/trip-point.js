@@ -36,6 +36,23 @@ function setTripPointElementTitle(tripPointElement, tripPointData) {
 }
 
 /**
+ * Функция возвращает время, и при необходимости дату, окончания путешествия
+ * @param {Object} tripPointData - описание точки путешествия
+ * @return {String} - текст даты окончания путешествия
+ */
+function getEndDateText(tripPointData) {
+  if (!tripPointData.endDate) {
+    return ``;
+  }
+
+  const endDateMoment = moment(tripPointData.endDate);
+  const dateDiff = endDateMoment.diff(moment(tripPointData.startDate));
+  const MSEC_IN_DAY = 24 * 60 * 60 * 1000;
+  const endDateFormat = dateDiff < MSEC_IN_DAY ? `H:mm` : `H:mm MMM D`;
+  return ` - ` + moment(tripPointData.endDate).format(endDateFormat);
+}
+
+/**
  * Функция задает время начала, окончания и длительность события
  * @param {Node} tripPointElement - элемента точки путешествия
  * @param {Object} tripPointData - описание точки путешествия
@@ -44,15 +61,7 @@ function setTripPointElementTime(tripPointElement, tripPointData) {
   const timeElement = tripPointElement.querySelector(`.trip-point__timetable`);
   const startDateMoment = moment(tripPointData.startDate);
   const startDateText = startDateMoment.format(`H:mm`);
-
-  let endDateText = ``;
-  if (tripPointData.endDate) {
-    const endDateMoment = moment(tripPointData.endDate);
-    const dateDiff = endDateMoment.diff(startDateMoment);
-    const MSEC_IN_DAY = 24 * 60 * 60 * 1000;
-    const endDateFormat = dateDiff < MSEC_IN_DAY ? `H:mm` : `H:mm MMM D`;
-    endDateText = ` - ` + moment(tripPointData.endDate).format(endDateFormat);
-  }
+  const endDateText = getEndDateText(tripPointData);
 
   timeElement.textContent = `${startDateText}${endDateText}`;
 
