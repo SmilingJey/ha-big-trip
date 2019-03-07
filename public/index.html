@@ -58,7 +58,6 @@
         <p class="trip-day__number">1</p>
         <h2 class="trip-day__title">Mar 18</h2>
       </article>
-
       <div class="trip-day__items">
       </div>
     </section>
@@ -68,6 +67,18 @@
 <template id="filter-template">
   <input type="radio" id="filter-id" name="filter" value="id">
   <label class="trip-filter__item" for="filter-id">Filter name</label>
+</template>
+
+<template id="trip-day-template">
+  <section class="trip-day">
+    <article class="trip-day__info">
+      <span class="trip-day__caption">Day</span>
+      <p class="trip-day__number">1</p>
+      <h2 class="trip-day__title">Mar 18</h2>
+    </article>
+    <div class="trip-day__items">
+    </div>
+  </section>
 </template>
 
 <template id="trip-point-template">
@@ -88,6 +99,12 @@
       </li>
     </ul>
   </article>
+</template>
+
+<template id="trip-point-offer-template">
+  <li>
+    <button class="trip-point__offer"></button>
+  </li>
 </template>
 
 <script src="bundle.js"></script>
