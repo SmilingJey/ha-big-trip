@@ -1,30 +1,12 @@
 import {randomInteger, randomBoolean, randomArrayItem, randomArrayFromArray} from './utils/random-utils.js';
+import {TRIP_POINT_TYPES} from './trip-point-types.js';
 
-const TRIP_POINT_TYPES = [
-  `Taxi`,
-  `Bus`,
-  `Train`,
-  `Ship`,
-  `Transport`,
-  `Drive`,
-  `Flight`,
-  `Check-in`,
-  `Sightseeing`,
-  `Restaurant`,
+const MOCK_DESTINATION = [
+  `Amsterdam`,
+  `London`,
+  `London`,
+  `Tokio`
 ];
-
-const MOCK_TITLES = {
-  [`Taxi`]: `Taxi to airport`,
-  [`Bus`]: `Bus to hotel`,
-  [`Train`]: `Train to Amsterdam`,
-  [`Ship`]: `Ship to Chamonix`,
-  [`Transport`]: `Transport to hotel`,
-  [`Drive`]: `Drive to sighs`,
-  [`Flight`]: `Flight to Geneva`,
-  [`Check-in`]: `Check into hotel`,
-  [`Sightseeing`]: `Sightseeing`,
-  [`Restaurant`]: `Dinner in restaurant`,
-};
 
 const MOCK_DESCRIPTION_STRINGS = [
   `Lorem ipsum dolor sit amet, consectetur adipiscing elit. `,
@@ -41,23 +23,27 @@ const MOCK_DESCRIPTION_STRINGS = [
 
 const MOCK_OFFERS = [
   {
-    name: `Add luggage`,
+    name: `add-luggage`,
+    text: `Add luggage`,
+    price: `10`,
+    isSelected: true
+  },
+  {
+    name: `switch-to-comfort-class`,
+    text: `Switch to comfort class`,
     price: `20`,
+    isSelected: true
+  },
+  {
+    name: `add-meal`,
+    text: `Add meal`,
+    price: `30`,
     isSelected: false
   },
   {
-    name: `Switch to comfort class`,
-    price: `20`,
-    isSelected: false
-  },
-  {
-    name: `Add meal`,
-    price: `20`,
-    isSelected: false
-  },
-  {
-    name: `Choose seats`,
-    price: `20`,
+    name: `choose-seats`,
+    text: `Choose seats`,
+    price: `40`,
     isSelected: false
   }
 ];
@@ -73,13 +59,13 @@ function createMockTripPoint() {
 
   return {
     type,
-    title: MOCK_TITLES[type],
+    destination: randomArrayItem(MOCK_DESTINATION),
     startDate,
     endDate,
     offers: randomArrayFromArray(MOCK_OFFERS).slice(0, 2),
-    price: 10 + randomInteger(5) * 20,
-    distination: randomArrayFromArray(MOCK_DESCRIPTION_STRINGS).slice(0, 5).join(` `),
-    photos: Array.from({length: 5}, () => `http://picsum.photos/300/150?r=${Math.random()}`),
+    price: 10 + randomInteger(100) * 5,
+    destinationText: randomArrayFromArray(MOCK_DESCRIPTION_STRINGS).slice(0, 5).join(` `),
+    photos: Array.from({length: 3}, () => `http://picsum.photos/300/150?r=${Math.random()}`),
     isFavorite: randomBoolean()
   };
 }

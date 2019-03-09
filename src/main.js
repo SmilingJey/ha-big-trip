@@ -1,6 +1,5 @@
 import createFilterElement from './filter.js';
-import createMockTripPoint from './mock-trip-point.js';
-import renderTripPoints from './render-trip-points.js';
+import TripPointsList from './trip-points-list.js';
 
 /**
  * Отображение фильтров
@@ -11,19 +10,19 @@ function renderFilters() {
       id: `everything`,
       name: `Everything`,
       isActive: true,
-      onChange: showTripPoints
+      onChange: undefined
     },
     {
       id: `future`,
       name: `Future`,
       isActive: false,
-      onChange: showTripPoints
+      onChange: undefined
     },
     {
       id: `past`,
       name: `Past`,
       isActive: false,
-      onChange: showTripPoints
+      onChange: undefined
     }
   ];
 
@@ -40,12 +39,8 @@ function renderFilters() {
 
 renderFilters();
 
-/**
- * Отображение точек маршрута
- */
-function showTripPoints() {
-  const tripPoints = Array(10).fill().map(createMockTripPoint);
-  renderTripPoints(tripPoints);
-}
+// Отображение точек маршрута
+const tripPointsList = new TripPointsList();
+document.querySelector(`main`).append(tripPointsList.render());
 
-showTripPoints();
+
