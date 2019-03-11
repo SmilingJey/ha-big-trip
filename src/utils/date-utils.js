@@ -11,16 +11,6 @@ function compareDate(date1, date2) {
 }
 
 /**
- * Функция сравнивает даты двух точек путешестия вычитанием даты начал
- * @param {Object} tripPoint1 - описание точки маршрута
- * @param {Object} tripPoint2 - описание точки маршрута
- * @return {Number} - разница дат начал
- */
-function compareTripPointDate(tripPoint1, tripPoint2) {
-  return compareDate(tripPoint1.startDate, tripPoint2.startDate);
-}
-
-/**
  * Разница в днях между двумя датами, без учета времени
  * @param {Date} startDate - первая дата
  * @param {Date} endDate - вторая дата
@@ -50,4 +40,4 @@ function calcDurationString(startDate, endDate) {
   return durationText;
 }
 
-export {compareDate, compareTripPointDate, calcDaysDiff, calcDurationString};
+export {compareDate, calcDaysDiff, calcDurationString};
