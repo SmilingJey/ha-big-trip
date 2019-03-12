@@ -128,6 +128,10 @@ export default class TripPointEdit extends Component {
     document.removeEventListener(`keydown`, this._onESCkeydown);
   }
 
+  /**
+   * Возвращает пустой шаблон редактирования точки путешествия
+   * @return {Node} - шаблон редактирования точки путешествия
+   */
   get template() {
     const templateElement = document.querySelector(`#trip-point-edit-template`).content;
     const element = templateElement.querySelector(`.point`).cloneNode(true);

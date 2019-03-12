@@ -26,6 +26,10 @@ export default class TripPoint extends Component {
     this._onEditClick = this._onEditClick.bind(this);
   }
 
+  /**
+   * Обработчик события перехода в режим редактирования
+   * @param {Event} evt - событие
+   */
   _onEditClick(evt) {
     if (typeof this._onEdit !== `function`) {
       return;
@@ -38,24 +42,41 @@ export default class TripPoint extends Component {
     this._onEdit();
   }
 
+  /**
+   * Задает обработчик события перехода в режим редактирования
+   * @param {Function} fn - обработчки события
+   */
   set onEdit(fn) {
     this._onEdit = fn;
   }
 
+  /**
+   * Установка обработчиков событий
+   */
   bind() {
     this._element.addEventListener(`click`, this._onEditClick);
   }
 
+  /**
+   * Удаление обработчиков событий
+   */
   unbind() {
     this._element.removeEventListener(`click`, this._onEditClick);
   }
 
+  /**
+   * Возвращает пустой шаблон точки путешествия
+   * @return {Node} - шаблон точки путешествия
+   */
   get template() {
     const templateElement = document.querySelector(`#trip-point-template`).content;
     const element = templateElement.querySelector(`.trip-point`).cloneNode(true);
     return element;
   }
 
+  /**
+   * Отображение точки путешествия
+   */
   update() {
     this._updateIcon();
     this._updateTitle();
