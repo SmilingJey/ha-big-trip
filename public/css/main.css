@@ -237,7 +237,7 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 
 .trip-day__info {
-  flex-basis: 48px;
+  flex-basis: 60px;
   flex-grow: 0;
   flex-shrink: 0;
   margin-right: 15px;
@@ -358,18 +358,21 @@ input[type=radio]:checked + .trip-sorting__item {
   overflow: hidden;
 }
 
-.trip-points > .point {
+/*.trip-points > .point {*/
+/*.trip-points .point {
   margin-top: 40px;
   margin-bottom: 30px;
-}
+}*/
 
-.trip-points > .point .point__date {
+/* .trip-points > .point .point__date { */
+.trip-points .point .point__date {
   display: flex;
 }
 
-.trip-points > .point .point__input {
+/* .trip-points > .point .point__input { */
+/*.trip-points .point .point__input {
   border-bottom: 1px solid #0D8AE4;
-}
+}*/
 
 .point {
   padding: 15px 0;
@@ -388,7 +391,7 @@ input[type=radio]:checked + .trip-sorting__item {
 .point__date {
   display: none;
   font-size: 0;
-  width: 55px;
+  width: 60px;
   margin-right: 5px;
 }
 
@@ -417,7 +420,7 @@ input[type=radio]:checked + .trip-sorting__item {
   position: relative;
   padding: 0 2px 6px;
   display: flex;
-  width: 235px;
+  width: 200px;
   margin-right: 5px;
   margin-top: 4px;
   border-bottom: 1px solid #0D8AE4;

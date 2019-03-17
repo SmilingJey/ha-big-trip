@@ -4,7 +4,7 @@ const TRIP_POINT_TYPES = [
   `train`,
   `flight`,
   `check-in`,
-  `sightseeing`,
+  `sight-seeing`,
 ];
 
 const TRIP_POINT_ICONS = {
@@ -30,7 +30,7 @@ const TRIP_POINT_DESTINATION_TEXT = {
   [`drive`]: `Drive to`,
   [`flight`]: `Flight to`,
   [`check-in`]: `Check into`,
-  [`sightseeing`]: `Sightseeing`,
+  [`sight-seeing`]: `Sightseeing`,
   [`restaurant`]: `Dinner in`,
 };
 

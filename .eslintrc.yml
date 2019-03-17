@@ -14,7 +14,7 @@ rules:
   max-depth: ["error", 2]
   max-len: ["error", { "code": 120 }]
   max-lines: ["error", 500]
-  max-lines-per-function: ["error", 35]
+  max-lines-per-function: ["error", 100]
   max-nested-callbacks: ["error", 1]
   max-params: ["error", 2]
   max-statements: ["error", 20]
