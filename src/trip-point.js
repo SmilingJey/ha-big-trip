@@ -1,7 +1,6 @@
 import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from './utils/dom-utils.js';
-import {calcDurationString} from './utils/date-utils.js';
 import {TRIP_POINT_ICONS, TRIP_POINT_DESTINATION_TEXT} from './trip-point-types.js';
 
 /**
@@ -14,11 +13,12 @@ export default class TripPoint extends Component {
    */
   constructor(data) {
     super();
-    this.data = data;
+
     this._type = data.type;
     this._destination = data.destination;
-    this._startDate = data.startDate;
-    this._endDate = data.endDate;
+    this._date = data.date;
+    this._startTime = data.startTime;
+    this._endTime = data.endTime;
     this._price = data.price;
     this._offers = data.offers;
 
@@ -102,32 +102,21 @@ export default class TripPoint extends Component {
   }
 
   /**
-   * Возвращает время, и при необходимости дату, окончания путешествия
-   * @return {String} - текст даты окончания путешествия
-   */
-  _getEndDateText() {
-    if (!this._endDate) {
-      return ``;
-    }
-
-    const endDateMoment = moment(this._endDate);
-    const dateDiff = endDateMoment.diff(moment(this._endDate));
-    const MSEC_IN_DAY = 24 * 60 * 60 * 1000;
-    const endDateFormat = dateDiff < MSEC_IN_DAY ? `H:mm` : `H:mm MMM D`;
-    return ` - ` + moment(this._endDate).format(endDateFormat);
-  }
-
-  /**
    * Задает время начала, окончания и длительность события
    */
   _updateTime() {
     const timeElement = this._element.querySelector(`.trip-point__timetable`);
-    const startDateMoment = moment(this._startDate);
-    const startDateText = startDateMoment.format(`H:mm`);
-    const endDateText = this._getEndDateText();
+    const startDateText = moment(this._startTime).format(`H:mm`);
+    const dateDiff = moment(this._endTime).diff(moment(this._startTime));
+    const hasEndTime = this._endTime && dateDiff >= 60 * 1000;
+    const endDateText = hasEndTime ? ` - ${moment(this._endTime).format(`H:mm`)}` : ``;
     timeElement.textContent = `${startDateText}${endDateText}`;
     const durationElement = this._element.querySelector(`.trip-point__duration`);
-    durationElement.textContent = calcDurationString(this._startDate, this._endDate);
+    const MSEC_IN_HOUR = 60 * 60 * 1000;
+    const diffFormat = (dateDiff >= MSEC_IN_HOUR) ? `H[H] mm[M]` : `m[M]`;
+    const duration = moment(dateDiff).utc().format(diffFormat);
+
+    durationElement.textContent = hasEndTime ? duration : ``;
   }
 
   /**
@@ -144,14 +133,15 @@ export default class TripPoint extends Component {
   _updateOffers() {
     const offersContainerElement = this._element.querySelector(`.trip-point__offers`);
     removeChilds(offersContainerElement);
-    for (const offerElement of this._offers.map(this._renderTripPointOffer)) {
+    const availableOffers = this._offers.filter((offer) => !offer.isSelected);
+    for (const offerElement of availableOffers.map(this._renderTripPointOffer)) {
       offersContainerElement.prepend(offerElement);
     }
   }
 
   /**
    * Создает элемент оффера
-   * @param {*} offer - параметры оффера
+   * @param {*} offer - данные оффера
    * @return {Node} - элемент оффера
    */
   _renderTripPointOffer(offer) {

@@ -2,6 +2,7 @@ import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from './utils/dom-utils.js';
 import {TRIP_POINT_ICONS, TRIP_POINT_DESTINATION_TEXT} from './trip-point-types.js';
+import flatpickr from "flatpickr";
 
 const ESC_KEYCODE = 27;
 
@@ -14,14 +15,14 @@ export default class TripPointEdit extends Component {
     this._number = TripPointEdit.number++;
     this._type = data.type;
     this._destination = data.destination;
-    this._destinationText = data.destinationText;
-    this._startDate = data.startDate;
-    this._endDate = data.endDate;
-    this._offers = data.offers;
+    this._date = data.date;
+    this._startTime = data.startTime;
+    this._endTime = data.endTime;
     this._price = data.price;
-    this._distination = data.distination;
-    this._photos = data.photos;
+    this._offers = data.offers;
     this._isFavorite = data.isFavorite;
+    this._destinationText = data.destinationText;
+    this._photos = data.photos;
 
     this._onSubmit = null;
     this._onSubmitButtonClick = this._onSubmitButtonClick.bind(this);
@@ -46,9 +47,52 @@ export default class TripPointEdit extends Component {
    */
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
+    const formData = new FormData(this._element.querySelector(`form`));
+    const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
-      this._onSubmit();
+      this._onSubmit(newData);
     }
+  }
+
+  /**
+   * Создание объекта к описанием задачи из данных формы
+   * @param {FormData} formData - данные формы
+   * @return {Object} - объект с описанием задачи
+   */
+  _processForm(formData) {
+    const newData = {
+      type: formData.get(`travel-way`),
+      destination: formData.get(`destination`),
+      date: moment(formData.get(`day`), `MMM D`).toDate(),
+      offers: [],
+      startTime: null,
+      endTime: null,
+      price: formData.get(`price`),
+      isFavorite: formData.get(`favorite`) === `on`,
+      destinationText: this._destinationText,
+      photos: this._photos.slice(0),
+    };
+
+    const times = formData.get(`time`).split(` - `);
+    newData.startTime = moment(times[0], `H:mm`).toDate();
+    if (times.length > 1 && times[0] !== times[1]) {
+      newData.endTime = moment(times[1], `H:mm`).toDate();
+      if (moment(newData.endTime).isBefore(newData.startTime)) {
+        newData.endTime = moment(newData.endTime).add(1, `day`).toDate();
+      }
+    } else {
+      newData.endTime = newData.startTime;
+    }
+
+    for (const offer of this._offers) {
+      newData.offers.push({
+        name: offer.name,
+        text: offer.text,
+        price: offer.price,
+        isSelected: formData.getAll(`offer`).includes(offer.name),
+      });
+    }
+    return newData;
   }
 
   /**
@@ -76,8 +120,7 @@ export default class TripPointEdit extends Component {
    */
   _onSelectTripPointTypeClick(evt) {
     if (evt.target.classList.contains(`travel-way__select-input`)) {
-      const typeIconElement = this._element.querySelector(`.travel-way__label`);
-      typeIconElement.textContent = TRIP_POINT_ICONS[evt.target.value];
+      this._updateType(evt.target.value);
 
       const toogleElement = this._element.querySelector(`.travel-way__toggle`);
       toogleElement.checked = false;
@@ -93,12 +136,21 @@ export default class TripPointEdit extends Component {
   }
 
   /**
+   * Выход из режима редактирования
+   */
+  cancelEdit() {
+    if (typeof this._onCancel === `function`) {
+      this._onCancel();
+    }
+  }
+
+  /**
    * Обработчик нажатия клавиатуры
    * @param {*} evt - событие
    */
   _onESCkeydown(evt) {
-    if (evt.keyCode === ESC_KEYCODE && typeof this._onCancel === `function`) {
-      this._onCancel();
+    if (evt.keyCode === ESC_KEYCODE) {
+      this.cancelEdit();
     }
   }
 
@@ -111,6 +163,34 @@ export default class TripPointEdit extends Component {
     this._element.querySelector(`button[type=reset]`).addEventListener(`click`, this._onDeleteButtonClick);
 
     this._element.querySelector(`.travel-way__select`).addEventListener(`click`, this._onSelectTripPointTypeClick);
+
+    const dateInputElement = this._element.querySelector(`input[name=day]`);
+    flatpickr(dateInputElement, {
+      altInput: true,
+      altFormat: `M j`,
+      dateFormat: `M j`,
+      parseDate(date) {
+        return moment(date, `MMM D`).toDate();
+      },
+    });
+
+    const timeInputElement = this._element.querySelector(`input[name=time]`);
+    flatpickr(timeInputElement, {
+      enableTime: true,
+      mode: `range`,
+      // eslint-disable-next-line camelcase
+      time_24hr: true,
+      altInput: true,
+      altFormat: `H:i`,
+      dateFormat: `H:i`,
+      defaultDate: [
+        moment(this._startTime).format(`H:mm`),
+        moment(this._endTime).format(`H:mm`)
+      ],
+      locale: {
+        rangeSeparator: ` - `
+      },
+    });
 
     document.addEventListener(`keydown`, this._onESCkeydown);
   }
@@ -142,26 +222,29 @@ export default class TripPointEdit extends Component {
    * Обновляет отображение элемента
    */
   update() {
-    this._updateType();
+    this._updateType(this._type);
     this._updateDestination();
+    this._updateDate();
     this._updateTime();
     this._updatePrice();
     this._updateOffers();
     this._updateDestinationText();
     this._updateDestinationImages();
+    this._updateIsFavotire();
   }
 
   /**
    * Задает тип события
+   * @param {String} type - тип из TRIP_POINT_TYPES
    */
-  _updateType() {
+  _updateType(type) {
     const typeIconElement = this._element.querySelector(`.travel-way__label`);
-    typeIconElement.textContent = TRIP_POINT_ICONS[this._type];
+    typeIconElement.textContent = TRIP_POINT_ICONS[type];
 
     const destinationLabelElement = this._element.querySelector(`.point__destination-label`);
-    destinationLabelElement.textContent = TRIP_POINT_DESTINATION_TEXT[this._type];
+    destinationLabelElement.textContent = TRIP_POINT_DESTINATION_TEXT[type];
 
-    const selectedRadioElement = this._element.querySelector(`#travel-way-${this._type}`);
+    const selectedRadioElement = this._element.querySelector(`#travel-way-${type}`);
     selectedRadioElement.checked = true;
   }
 
@@ -174,13 +257,22 @@ export default class TripPointEdit extends Component {
   }
 
   /**
+   * Задает дату точки назначения
+   */
+  _updateDate() {
+    const dateElement = this._element.querySelector(`input[name=day]`);
+    dateElement.value = moment(this._date).format(`MMM D`).toUpperCase();
+  }
+
+  /**
    * Задает время начала и окончания события
    */
   _updateTime() {
     const timeElement = this._element.querySelector(`input[name=time]`);
-    const startTimeText = moment(this._startDate).format(`HH:mm`);
-    const endTimeText = moment(this._endDate).format(`HH:mm`);
-    timeElement.value = `${startTimeText} - ${endTimeText}`;
+    const startTimeText = moment(this._startTime).format(`H:mm`);
+    const hasEndTime = this._endTime && this._endTime !== this._startTime;
+    const endTimeText = hasEndTime ? ` TO ${moment(this._endTime).format(`H:mm`)}` : ``;
+    timeElement.value = `${startTimeText}${endTimeText}`;
   }
 
   /**
@@ -195,10 +287,15 @@ export default class TripPointEdit extends Component {
    * Задает доступные офферы
    */
   _updateOffers() {
-    const offersContainerElement = this._element.querySelector(`.point__offers-wrap`);
-    removeChilds(offersContainerElement);
-    for (const offerElement of this._offers.map(this._renderTripPointOffer)) {
-      offersContainerElement.prepend(offerElement);
+    if (!this._offers || !this._offers.length) {
+      const offersElement = this._element.querySelector(`.point__offers`);
+      offersElement.remove();
+    } else {
+      const offersContainerElement = this._element.querySelector(`.point__offers-wrap`);
+      removeChilds(offersContainerElement);
+      for (const offerElement of this._offers.map(this._renderTripPointOffer)) {
+        offersContainerElement.prepend(offerElement);
+      }
     }
   }
 

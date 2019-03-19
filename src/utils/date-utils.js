@@ -22,22 +22,4 @@ function calcDaysDiff(startDate, endDate) {
   return endDateMoment.diff(startDateMoment, `days`);
 }
 
-/**
- * Функция возвращает разницу дат в виде строки вида 1D 20H 15M.
- * @param {Date} startDate - дата начала
- * @param {Date} endDate - дата окончания
- * @return {String} - строка с разницей дат
- */
-function calcDurationString(startDate, endDate) {
-  const MSEC_IN_HOUR = 60 * 60 * 1000;
-
-  const dateDiff = moment(endDate).diff(moment(startDate));
-
-  const diffFormat = (dateDiff >= MSEC_IN_HOUR) ? `H[H] mm[M]` : `mm[M]`;
-  const durationHoursAndMinute = moment(dateDiff).utc().format(diffFormat);
-  const durationDays = moment(endDate).diff(moment(startDate), `days`);
-  const durationText = durationDays ? `${durationDays}D ${durationHoursAndMinute}` : durationHoursAndMinute;
-  return durationText;
-}
-
-export {compareDate, calcDaysDiff, calcDurationString};
+export {compareDate, calcDaysDiff};

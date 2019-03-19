@@ -27,6 +27,9 @@ export default class Component {
   }
 
   unrender() {
+    if (this._element === null) {
+      return;
+    }
     this.unbind();
     this._element.remove();
     this._element = null;

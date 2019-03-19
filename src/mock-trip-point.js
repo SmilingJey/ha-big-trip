@@ -26,26 +26,26 @@ const MOCK_OFFERS = [
     name: `add-luggage`,
     text: `Add luggage`,
     price: `10`,
-    isSelected: true
+    isSelected: true,
   },
   {
     name: `switch-to-comfort-class`,
     text: `Switch to comfort class`,
     price: `20`,
-    isSelected: true
+    isSelected: true,
   },
   {
     name: `add-meal`,
     text: `Add meal`,
     price: `30`,
-    isSelected: false
+    isSelected: false,
   },
   {
     name: `choose-seats`,
     text: `Choose seats`,
     price: `40`,
-    isSelected: false
-  }
+    isSelected: false,
+  },
 ];
 
 /**
@@ -53,20 +53,17 @@ const MOCK_OFFERS = [
  * @return {Object} - точка маршрута
  */
 function createMockTripPoint() {
-  const type = randomArrayItem(TRIP_POINT_TYPES);
-  const startDate = Date.now() + 1 + randomInteger(10 * 24 * 3600 * 1000);
-  const endDate = startDate + (1 + randomInteger(10)) * 1800 * 1000;
-
   return {
-    type,
+    type: randomArrayItem(TRIP_POINT_TYPES),
     destination: randomArrayItem(MOCK_DESTINATION),
-    startDate,
-    endDate,
-    offers: randomArrayFromArray(MOCK_OFFERS).slice(0, 2),
+    date: Date.now() + 1 + randomInteger(10 * 24 * 3600 * 1000),
+    startTime: Date.now(),
+    endTime: Date.now() + randomInteger(10) * 60 * 15 * 1000,
     price: 10 + randomInteger(100) * 5,
+    offers: randomArrayFromArray(MOCK_OFFERS).splice(0, 2),
+    isFavorite: randomBoolean(),
     destinationText: randomArrayFromArray(MOCK_DESCRIPTION_STRINGS).slice(0, 5).join(` `),
-    photos: Array.from({length: 3}, () => `http://picsum.photos/300/150?r=${Math.random()}`),
-    isFavorite: randomBoolean()
+    photos: Array.from({length: 3}, () => `http://picsum.photos/290/150?r=${Math.random()}`),
   };
 }
 
