@@ -12,13 +12,12 @@ import createMockTripPoint from './mock-trip-point.js';
 export default class TripPointsList extends Component {
   constructor() {
     super();
-    this._points = Array(3).fill().map(createMockTripPoint);
-
+    this._tripPointsData = Array(20).fill().map(createMockTripPoint);
     this._sortFunction = (point1, point2) => compareDate(point1.date, point2.date);
     this._filterFunction = null;
     this._tripPointEdit = null;
-
     this._tripPoints = [];
+    this.getData = this.getData.bind(this);
   }
 
   /**
@@ -37,6 +36,14 @@ export default class TripPointsList extends Component {
   set filterFunction(fn) {
     this._filterFunction = fn;
     this.update();
+  }
+
+  /**
+   * Вохвращает данные точек путешествия
+   * @return {Array}
+   */
+  getData() {
+    return this._tripPointsData;
   }
 
   /**
@@ -64,7 +71,7 @@ export default class TripPointsList extends Component {
    * @return {Array} - массив точек путешествия
    */
   getDisplayedPoints() {
-    return this.sortPoints(this.filterPoints(this._points));
+    return this.sortPoints(this.filterPoints(this._tripPointsData));
   }
 
   /**
@@ -122,7 +129,7 @@ export default class TripPointsList extends Component {
    * @return {Node} - дата начала путешествия
    */
   _getTripStartDate() {
-    return this._points.reduce((min, point) => point.date < min ? point.date : min, Infinity);
+    return this._tripPointsData.reduce((min, point) => point.date < min ? point.date : min, Infinity);
   }
 
   /**
@@ -152,7 +159,7 @@ export default class TripPointsList extends Component {
     const tripPointEdit = new TripPointEdit(data);
 
     tripPointEdit.onSubmit = (newData) => {
-      this._points[this._points.indexOf(data)] = newData;
+      this._tripPointsData[this._tripPointsData.indexOf(data)] = newData;
       if (!moment(newData.date).isSame(data.date) ||
           !moment(newData.startTime).isSame(data.startTime)) {
         this.update();
@@ -172,7 +179,7 @@ export default class TripPointsList extends Component {
     };
 
     tripPointEdit.onDelete = () => {
-      this._points.splice(this._points.indexOf(data), 1);
+      this._tripPointsData.splice(this._tripPointsData.indexOf(data), 1);
       tripPointEdit.unrender();
       this.update();
       this._tripPointEdit = null;

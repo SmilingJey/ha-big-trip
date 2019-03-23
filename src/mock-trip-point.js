@@ -1,5 +1,5 @@
 import {randomInteger, randomBoolean, randomArrayItem, randomArrayFromArray} from './utils/random-utils.js';
-import {TRIP_POINT_TYPES} from './trip-point-types.js';
+import {TripPointType} from './trip-point-type.js';
 
 const MOCK_DESTINATION = [
   `Amsterdam`,
@@ -54,7 +54,7 @@ const MOCK_OFFERS = [
  */
 function createMockTripPoint() {
   return {
-    type: randomArrayItem(TRIP_POINT_TYPES),
+    type: randomArrayItem(Object.keys(TripPointType)),
     destination: randomArrayItem(MOCK_DESTINATION),
     date: Date.now() + 1 + randomInteger(10 * 24 * 3600 * 1000),
     startTime: Date.now(),
