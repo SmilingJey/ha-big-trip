@@ -67,7 +67,7 @@ export default class TripPointEdit extends Component {
       offers: [],
       startTime: null,
       endTime: null,
-      price: formData.get(`price`),
+      price: parseFloat(formData.get(`price`)),
       isFavorite: formData.get(`favorite`) === `on`,
       destinationText: this._destinationText,
       photos: this._photos.slice(0),
