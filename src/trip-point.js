@@ -1,7 +1,7 @@
 import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from './utils/dom-utils.js';
-import {TRIP_POINT_ICONS, TRIP_POINT_DESTINATION_TEXT} from './trip-point-types.js';
+import {TripPointType} from './trip-point-type.js';
 
 /**
  * Описывает точку путешествия в режиме отображения в списке
@@ -90,7 +90,7 @@ export default class TripPoint extends Component {
    */
   _updateIcon() {
     const iconElement = this._element.querySelector(`.trip-icon`);
-    iconElement.textContent = TRIP_POINT_ICONS[this._type];
+    iconElement.textContent = TripPointType[this._type].icon;
   }
 
   /**
@@ -98,7 +98,7 @@ export default class TripPoint extends Component {
    */
   _updateTitle() {
     const titleElement = this._element.querySelector(`.trip-point__title`);
-    titleElement.textContent = `${TRIP_POINT_DESTINATION_TEXT[this._type]} ${this._destination}`;
+    titleElement.textContent = `${TripPointType[this._type].destinationText} ${this._destination}`;
   }
 
   /**

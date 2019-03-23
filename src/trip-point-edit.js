@@ -1,7 +1,7 @@
 import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from './utils/dom-utils.js';
-import {TRIP_POINT_ICONS, TRIP_POINT_DESTINATION_TEXT} from './trip-point-types.js';
+import {TripPointType} from './trip-point-type.js';
 import flatpickr from "flatpickr";
 
 const ESC_KEYCODE = 27;
@@ -84,14 +84,13 @@ export default class TripPointEdit extends Component {
       newData.endTime = newData.startTime;
     }
 
-    for (const offer of this._offers) {
-      newData.offers.push({
-        name: offer.name,
-        text: offer.text,
-        price: offer.price,
-        isSelected: formData.getAll(`offer`).includes(offer.name),
-      });
-    }
+    newData.offers = this._offers.map((offer) => ({
+      name: offer.name,
+      text: offer.text,
+      price: offer.price,
+      isSelected: formData.getAll(`offer`).includes(offer.name),
+    }));
+
     return newData;
   }
 
@@ -235,14 +234,14 @@ export default class TripPointEdit extends Component {
 
   /**
    * Задает тип события
-   * @param {String} type - тип из TRIP_POINT_TYPES
+   * @param {String} type - тип
    */
   _updateType(type) {
     const typeIconElement = this._element.querySelector(`.travel-way__label`);
-    typeIconElement.textContent = TRIP_POINT_ICONS[type];
+    typeIconElement.textContent = TripPointType[type].icon;
 
     const destinationLabelElement = this._element.querySelector(`.point__destination-label`);
-    destinationLabelElement.textContent = TRIP_POINT_DESTINATION_TEXT[type];
+    destinationLabelElement.textContent = TripPointType[type].destinationText;
 
     const selectedRadioElement = this._element.querySelector(`#travel-way-${type}`);
     selectedRadioElement.checked = true;
