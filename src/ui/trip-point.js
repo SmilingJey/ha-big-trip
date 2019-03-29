@@ -1,7 +1,10 @@
 import Component from './component.js';
 import * as moment from 'moment';
-import {removeChilds} from './utils/dom-utils.js';
-import {TripPointType} from './trip-point-type.js';
+import {removeChilds} from '../utils/dom-utils.js';
+import {TripPointType} from '../trip-point-type.js';
+import {deepCopy} from '../utils/data-utils.js';
+import {calcDurationString} from '../utils/date-utils.js';
+import {calcTripPointCost} from '../utils/trip-utils.js';
 
 /**
  * Описывает точку путешествия в режиме отображения в списке
@@ -13,33 +16,10 @@ export default class TripPoint extends Component {
    */
   constructor(data) {
     super();
-
-    this._type = data.type;
-    this._destination = data.destination;
-    this._date = data.date;
-    this._startTime = data.startTime;
-    this._endTime = data.endTime;
-    this._price = data.price;
-    this._offers = data.offers;
+    this._data = deepCopy(data);
 
     this._onEdit = null;
     this._onEditClick = this._onEditClick.bind(this);
-  }
-
-  /**
-   * Обработчик события перехода в режим редактирования
-   * @param {Event} evt - событие
-   */
-  _onEditClick(evt) {
-    if (typeof this._onEdit !== `function`) {
-      return;
-    }
-
-    if (evt.target.tagName === `BUTTON`) {
-      evt.stopPropagation();
-      return;
-    }
-    this._onEdit();
   }
 
   /**
@@ -48,6 +28,10 @@ export default class TripPoint extends Component {
    */
   set onEdit(fn) {
     this._onEdit = fn;
+  }
+
+  get data() {
+    return this._data;
   }
 
   /**
@@ -90,7 +74,7 @@ export default class TripPoint extends Component {
    */
   _updateIcon() {
     const iconElement = this._element.querySelector(`.trip-icon`);
-    iconElement.textContent = TripPointType[this._type].icon;
+    iconElement.textContent = TripPointType[this._data.type].icon;
   }
 
   /**
@@ -98,7 +82,7 @@ export default class TripPoint extends Component {
    */
   _updateTitle() {
     const titleElement = this._element.querySelector(`.trip-point__title`);
-    titleElement.textContent = `${TripPointType[this._type].destinationText} ${this._destination}`;
+    titleElement.textContent = `${TripPointType[this._data.type].destinationText} ${this._data.destination.name}`;
   }
 
   /**
@@ -106,17 +90,14 @@ export default class TripPoint extends Component {
    */
   _updateTime() {
     const timeElement = this._element.querySelector(`.trip-point__timetable`);
-    const startDateText = moment(this._startTime).format(`H:mm`);
-    const dateDiff = moment(this._endTime).diff(moment(this._startTime));
-    const hasEndTime = this._endTime && dateDiff >= 60 * 1000;
-    const endDateText = hasEndTime ? ` - ${moment(this._endTime).format(`H:mm`)}` : ``;
+    const startDateText = moment(this._data.dateFrom).format(`D MMM H:mm`);
+    const hasEndDate = this._data.dateTo && (this._data.dateFrom - this._data.dateTo);
+    const isSameDay = moment(this._data.dateFrom).isSame(this._data.dateTo, `day`);
+    const endDateFormat = isSameDay ? `H:mm` : `D MMM H:mm`;
+    const endDateText = hasEndDate ? ` - ` + moment(this._data.dateTo).format(endDateFormat) : ``;
     timeElement.textContent = `${startDateText}${endDateText}`;
     const durationElement = this._element.querySelector(`.trip-point__duration`);
-    const MSEC_IN_HOUR = 60 * 60 * 1000;
-    const diffFormat = (dateDiff >= MSEC_IN_HOUR) ? `H[H] mm[M]` : `m[M]`;
-    const duration = moment(dateDiff).utc().format(diffFormat);
-
-    durationElement.textContent = hasEndTime ? duration : ``;
+    durationElement.textContent = calcDurationString(this._data.dateFrom, this._data.dateTo);
   }
 
   /**
@@ -124,7 +105,7 @@ export default class TripPoint extends Component {
    */
   _updatePrice() {
     const priceElement = this._element.querySelector(`.trip-point__price`);
-    priceElement.textContent = `€ ${this._price}`;
+    priceElement.textContent = `€ ${calcTripPointCost(this._data)}`;
   }
 
   /**
@@ -133,7 +114,7 @@ export default class TripPoint extends Component {
   _updateOffers() {
     const offersContainerElement = this._element.querySelector(`.trip-point__offers`);
     removeChilds(offersContainerElement);
-    const availableOffers = this._offers.filter((offer) => !offer.isSelected);
+    const availableOffers = this._data.offers.filter((offer) => !offer.accepted);
     for (const offerElement of availableOffers.map(this._renderTripPointOffer)) {
       offersContainerElement.prepend(offerElement);
     }
@@ -148,7 +129,23 @@ export default class TripPoint extends Component {
     const offerTemlate = document.querySelector(`#trip-point-offer-template`).content;
     const offerElement = offerTemlate.cloneNode(true);
     const offerTextElement = offerElement.querySelector(`.trip-point__offer`);
-    offerTextElement.textContent = `${offer.text} + € ${offer.price}`;
+    offerTextElement.textContent = `${offer.title} + € ${offer.price}`;
     return offerElement;
+  }
+
+  /**
+   * Обработчик события перехода в режим редактирования
+   * @param {Event} evt - событие
+   */
+  _onEditClick(evt) {
+    if (typeof this._onEdit !== `function`) {
+      return;
+    }
+
+    if (evt.target.tagName === `BUTTON`) {
+      evt.stopPropagation();
+      return;
+    }
+    this._onEdit();
   }
 }

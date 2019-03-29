@@ -1,7 +1,7 @@
 import Component from "./component.js";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {TripPointType} from './trip-point-type.js';
+import {TripPointType} from '../trip-point-type.js';
 
 const BAR_HEIGHT = 55;
 
@@ -170,7 +170,7 @@ const timeSpentChartConfig = {
     },
     title: {
       display: true,
-      text: `TRANSPORT`,
+      text: `TIME SPENT`,
       fontColor: `#000000`,
       fontSize: 23,
       position: `left`
@@ -219,13 +219,16 @@ export default class Statistic extends Component {
   }
 
   get template() {
-    const templateElement = document.querySelector(`#trip-statistic`).content;
+    const templateElement = document.querySelector(`#trip-statistic-template`).content;
     const element = templateElement.querySelector(`.statistic`).cloneNode(true);
     return element;
   }
 
   update() {
     const data = this._getData();
+    if (!data) {
+      return;
+    }
     this._updateMoneyChart(data);
     this._updateTransportChart(data);
     this._updateTimeSpentChart(data);
@@ -319,7 +322,7 @@ export default class Statistic extends Component {
   }
 
   _getTripPointMinuteDuration(tripPoint) {
-    return Math.abs(tripPoint.startTime - tripPoint.endTime) / 60 / 1000;
+    return Math.round(Math.abs(tripPoint.dateTo - tripPoint.dateFrom) / 60 / 1000);
   }
 }
 

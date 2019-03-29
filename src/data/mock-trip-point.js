@@ -4,7 +4,7 @@ import {TripPointType} from './trip-point-type.js';
 const MOCK_DESTINATION = [
   `Amsterdam`,
   `London`,
-  `London`,
+  `Moscow`,
   `Tokio`
 ];
 
@@ -23,47 +23,51 @@ const MOCK_DESCRIPTION_STRINGS = [
 
 const MOCK_OFFERS = [
   {
-    name: `add-luggage`,
-    text: `Add luggage`,
+    title: `Add luggage`,
     price: `10`,
-    isSelected: true,
+    accepted: true,
   },
   {
-    name: `switch-to-comfort-class`,
-    text: `Switch to comfort class`,
+    title: `Switch to comfort class`,
     price: `20`,
-    isSelected: true,
+    accepted: true,
   },
   {
-    name: `add-meal`,
-    text: `Add meal`,
+    title: `Add meal`,
     price: `30`,
-    isSelected: false,
+    accepted: false,
   },
   {
-    name: `choose-seats`,
-    text: `Choose seats`,
+    title: `Choose seats`,
     price: `40`,
-    isSelected: false,
+    accepted: false,
   },
 ];
+
+let mockId = 0;
 
 /**
  * Функция возвращает случайно сгенерированную точку маршрута
  * @return {Object} - точка маршрута
  */
 function createMockTripPoint() {
+  const dateFrom = Date.now() + 1 + randomInteger(10 * 24 * 3600 * 1000);
   return {
+    id: mockId++,
     type: randomArrayItem(Object.keys(TripPointType)),
-    destination: randomArrayItem(MOCK_DESTINATION),
-    date: Date.now() + 1 + randomInteger(10 * 24 * 3600 * 1000),
-    startTime: Date.now(),
-    endTime: Date.now() + randomInteger(10) * 60 * 15 * 1000,
+    destination: {
+      name: randomArrayItem(MOCK_DESTINATION),
+      description: randomArrayFromArray(MOCK_DESCRIPTION_STRINGS).slice(0, 5).join(` `),
+      pictures: Array.from({length: 3}, () => ({
+        description: `some text`,
+        src: `http://picsum.photos/290/150?r=${Math.random()}`,
+      }))
+    },
+    dateFrom,
+    dateTo: dateFrom + randomInteger(10) * 60 * 15 * 1000,
     price: 10 + randomInteger(100) * 5,
     offers: randomArrayFromArray(MOCK_OFFERS).splice(0, 2),
     isFavorite: randomBoolean(),
-    destinationText: randomArrayFromArray(MOCK_DESCRIPTION_STRINGS).slice(0, 5).join(` `),
-    photos: Array.from({length: 3}, () => `http://picsum.photos/290/150?r=${Math.random()}`),
   };
 }
 

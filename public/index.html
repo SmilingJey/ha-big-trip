@@ -15,21 +15,13 @@
 <header class="header">
   <div class="content-wrap header__wrap">
     <section class="trip">
-      <div class="trip__schedule">
-        <i class="trip-icon">⛰️</i>
-        <h1 class="trip__points">Amsterdam&nbsp;&mdash; Geneva&nbsp;&mdash;  Chamonix</h1>
-        <p class="trip__dates">Mar 17&nbsp;&mdash; 19</p>
-      </div>
-      <p class="trip__total">Total: <span class="trip__total-cost">&euro;&nbsp;1500</span></p>
     </section>
 
     <section class="trip-controls">
       <nav class="trip-controls__menus view-switch">
         <a href="#table" class="view-switch__item view-switch__item--active">Table</a>
         <a href="#stats" class="view-switch__item">Stats</a>
-
       </nav>
-
       <button class="trip-controls__new-event new-event">+ New Event</button>
     </section>
   </div>
@@ -37,7 +29,10 @@
 
 <main class="main content-wrap" id="table">
   <form class="trip-sorting">
-    <input type="radio" name="trip-sorting" id="sorting-event" value="event" checked>
+    <input type="radio" name="trip-sorting" id="sorting-day" value="day" checked>
+    <label class="trip-sorting__item trip-sorting__item--day" for="sorting-day">Day</label>
+
+    <input type="radio" name="trip-sorting" id="sorting-event" value="event">
     <label class="trip-sorting__item trip-sorting__item--event" for="sorting-event">Event</label>
 
     <input type="radio" name="trip-sorting" id="sorting-time" value="time">
@@ -126,8 +121,8 @@
               <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-check-in" name="travel-way" value="check-in">
               <label class="travel-way__select-label" for="travel-way-check-in">🏨 check-in</label>
 
-              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sight-seeing" name="travel-way" value="sight-seeing">
-              <label class="travel-way__select-label" for="travel-way-sight-seeing">🏛 sightseeing</label>
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travel-way" value="sightseeing">
+              <label class="travel-way__select-label" for="travel-way-sightseeing">🏛 sightseeing</label>
             </div>
           </div>
         </div>
@@ -136,17 +131,14 @@
           <label class="point__destination-label" for="destination">Flight to</label>
           <input class="point__destination-input" list="destination-select" id="destination" value="Chamonix" name="destination">
           <datalist id="destination-select">
-            <option value="airport"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
-            <option value="hotel"></option>
           </datalist>
         </div>
 
-        <label class="point__time">
+        <div class="point__time">
           choose time
-          <input class="point__input" type="text" value="00:00 — 00:00" name="time" placeholder="00:00 — 00:00">
-        </label>
+          <input class="point__input point__input--date-start" type="text" value="19:00" name="date-start" placeholder="19:00">
+          <input class="point__input point__input--date-end" type="text" value="21:00" name="date-end" placeholder="21:00">
+        </div>
 
         <label class="point__price">
           write price
@@ -216,21 +208,32 @@
   </label>
 </template>
 
-<template id="trip-statistic">
+<template id="trip-statistic-template">
   <section class="statistic content-wrap" id="stats">
     <div class="statistic__item statistic__item--money">
       <canvas class="statistic__money" width="900"></canvas>
     </div>
-
     <div class="statistic__item statistic__item--transport">
       <canvas class="statistic__transport" width="900"></canvas>
     </div>
-
     <div class="statistic__item statistic__item--time-spend">
       <canvas class="statistic__time-spend" width="900"></canvas>
     </div>
   </section>
 </template>
+
+<template id="trip-schedule-template">
+  <div class="trip__schedule">
+    <i class="trip-icon">⛰️</i>
+    <h1 class="trip__points">Amsterdam&nbsp;&mdash; Geneva&nbsp;&mdash;  Chamonix</h1>
+    <p class="trip__dates">Mar 17&nbsp;&mdash; 19</p>
+  </div>
+</template>
+
+<template id="total-cost-template">
+  <p class="trip__total">Total: <span class="trip__total-cost">&euro;&nbsp;1500</span></p>
+</template>
+
 
 <script src="bundle.js"></script>
 </body>

@@ -29,7 +29,7 @@ const TripPointType = {
     destinationText: `Check into`,
     isTransport: false,
   },
-  [`sight-seeing`]: {
+  [`sightseeing`]: {
     icon: `🏛️`,
     name: `Sightseeing`,
     destinationText: `Sightseeing`,

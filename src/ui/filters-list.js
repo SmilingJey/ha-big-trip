@@ -11,12 +11,12 @@ const filtersData = [
   {
     id: `future`,
     name: `Future`,
-    filterFunction: (tripPointDate) => tripPointDate.date > Date.now(),
+    filterFunction: (tripPointDate) => tripPointDate.dateFrom > Date.now(),
   },
   {
     id: `past`,
     name: `Past`,
-    filterFunction: (tripPointDate) => tripPointDate.date <= Date.now(),
+    filterFunction: (tripPointDate) => tripPointDate.dateFrom <= Date.now(),
   }
 ];
 
@@ -64,6 +64,16 @@ export default class FilterList extends Component {
   }
 
   /**
+   * Удаление компонента
+   */
+  unrender() {
+    super.unrender();
+    for (const filter of this._filters) {
+      filter.unrender();
+    }
+  }
+
+  /**
    * Создание фильтра
    * @param {Object} filterData - данные фильтра
    * @return {Object} - фильтр
@@ -76,15 +86,5 @@ export default class FilterList extends Component {
       }
     };
     return filter;
-  }
-
-  /**
-   * Удаление компонента
-   */
-  unrender() {
-    super.unrender();
-    for (const filter of this._filters) {
-      filter.unrender();
-    }
   }
 }
