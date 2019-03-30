@@ -3,18 +3,14 @@ import Filter from "./filter";
 
 const filtersData = [
   {
-    id: `everything`,
     name: `Everything`,
-    isActive: true,
     filterFunction: () => true,
   },
   {
-    id: `future`,
     name: `Future`,
     filterFunction: (tripPointDate) => tripPointDate.dateFrom > Date.now(),
   },
   {
-    id: `past`,
     name: `Past`,
     filterFunction: (tripPointDate) => tripPointDate.dateFrom <= Date.now(),
   }
@@ -24,10 +20,12 @@ const filtersData = [
  * Класс представляет список фильтров
  */
 export default class FilterList extends Component {
-  constructor() {
+  constructor(getDataCallback) {
     super();
     this._filters = [];
     this._onFilter = null;
+    this._getDataCallback = getDataCallback;
+    this._activeFilterName = `Everything`;
   }
 
   /**
@@ -54,7 +52,11 @@ export default class FilterList extends Component {
     for (const filter of this._filters) {
       filter.unrender();
     }
-
+    const data = this._getDataCallback();
+    for (const filterData of filtersData) {
+      filterData.isActive = filterData.name === this._activeFilterName;
+      filterData.disabled = !data || !data.filter(filterData.filterFunction).length;
+    }
     this._filters = filtersData.map(this._createFilter.bind(this));
     const filtersFragment = document.createDocumentFragment();
     for (const filter of this._filters) {
@@ -67,10 +69,10 @@ export default class FilterList extends Component {
    * Удаление компонента
    */
   unrender() {
-    super.unrender();
     for (const filter of this._filters) {
       filter.unrender();
     }
+    super.unrender();
   }
 
   /**
@@ -80,7 +82,8 @@ export default class FilterList extends Component {
    */
   _createFilter(filterData) {
     const filter = new Filter(filterData);
-    filter.onFilter = (filterFunction) => {
+    filter.onFilter = (filterName, filterFunction) => {
+      this._activeFilterName = filterName;
       if (typeof this._onFilter === `function`) {
         this._onFilter(filterFunction);
       }

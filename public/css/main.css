@@ -146,6 +146,10 @@ a.view-switch__item--active:link {
   position: absolute;
 }
 
+.trip-filter__container {
+  display: inline-block;
+}
+
 .trip-filter__item {
   font-size: var(--font-size-smaller);
   font-weight: 800;
@@ -156,6 +160,10 @@ a.view-switch__item--active:link {
 }
 .trip-filter__item:hover {
   opacity: 0.5;
+}
+
+input:disabled + .trip-filter__item {
+  opacity: 0.3;
 }
 
 input[type=radio]:checked + .trip-filter__item {
