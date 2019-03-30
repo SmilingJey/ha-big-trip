@@ -3,7 +3,7 @@ import * as moment from 'moment';
 import {removeChilds} from '../utils/dom-utils.js';
 import {TripPointType} from '../trip-point-type.js';
 import flatpickr from "flatpickr";
-import {deepCopy} from '../utils/data-utils.js';
+import {deepCopyData} from '../utils/data-utils.js';
 import {debounce} from '../utils/events-utils.js';
 
 /**
@@ -12,7 +12,7 @@ import {debounce} from '../utils/events-utils.js';
 export default class TripPointEdit extends Component {
   constructor({data, destinationsData, availableOffersData}) {
     super();
-    this._data = deepCopy(data);
+    this._data = deepCopyData(data);
     this._destinationsData = destinationsData;
     this._availableOffersData = availableOffersData;
 
@@ -136,7 +136,7 @@ export default class TripPointEdit extends Component {
     this._updateDestinationsDatalist();
     this._updateDate();
     this._updatePrice();
-    this._updateOffers(this._data.offers);
+    this._updateOffers();
     this._updateIsFavotire();
     this._updateDestinationText(this._data.destination.description);
     this._updateDestinationImages(this._data.destination.pictures);
@@ -246,11 +246,12 @@ export default class TripPointEdit extends Component {
    * Задает доступные офферы
    * @param {Array} offers - массив с доступными офферами
    */
-  _updateOffers(offers) {
+  _updateOffers() {
     const offersContainerElement = this._element.querySelector(`.point__offers-wrap`);
     removeChilds(offersContainerElement);
-    if (offers && offers.length) {
-      for (const offerElement of offers.map(this._renderTripPointOffer.bind(this))) {
+    if (this._data.offers && this._data.offers.length) {
+      const offerElements = this._data.offers.map(this._renderTripPointOffer.bind(this));
+      for (const offerElement of offerElements) {
         offersContainerElement.prepend(offerElement);
       }
     } else {
@@ -347,7 +348,7 @@ export default class TripPointEdit extends Component {
    * @return {Object} - объект с описанием задачи
    */
   _processForm(formData) {
-    const newData = deepCopy(this._data);
+    const newData = deepCopyData(this._data);
     newData.type = formData.get(`travel-way`);
     newData.destination = this._destinationsData.getDescription(formData.get(`destination`));
     newData.dateFrom = moment(formData.get(`date-start`), `D MMM YYYY H:mm`).toDate().getTime();
@@ -355,7 +356,7 @@ export default class TripPointEdit extends Component {
     newData.price = parseFloat(formData.get(`price`));
     newData.isFavorite = formData.get(`favorite`) === `on`;
 
-    newData.offers = this._availableOffersData.getOffers(newData.type).map((offer) => {
+    newData.offers = this._data.offers.map((offer) => {
       offer.accepted = formData.getAll(`offer`).includes(offer.title);
       return offer;
     });
@@ -413,7 +414,8 @@ export default class TripPointEdit extends Component {
   _onSelectTripPointTypeClick(evt) {
     if (evt.target.classList.contains(`travel-way__select-input`)) {
       this._updateType(evt.target.value);
-      this._updateOffers(this._availableOffersData.getOffers(evt.target.value));
+      this._data.offers = deepCopyData(this._availableOffersData.getOffers(evt.target.value));
+      this._updateOffers();
       const toogleElement = this._element.querySelector(`.travel-way__toggle`);
       toogleElement.checked = false;
     }

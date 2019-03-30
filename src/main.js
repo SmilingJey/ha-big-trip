@@ -10,7 +10,7 @@ import {compareDate} from './utils/date-utils.js';
 import {calcTripPointCost, getTripStartDate} from './utils/trip-utils.js';
 
 
-const AUTHORIZATION = `Basic smilingjey2`;
+const AUTHORIZATION = `Basic smilingjey7`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 
 // компоненты доступа к данным
@@ -92,7 +92,10 @@ function onNewTripPointClick() {
   });
 
   tripPointsData.addTripPoint(newTaskData)
-    .then((data) => tripPointsList.openTripPointInEditMode(data))
+    .then((data) => {
+      tripPointsList.hideMessage();
+      tripPointsList.openTripPointInEditMode(data);
+    })
     .catch(() => tripPointsList.showErrorMessage());
 }
 const newTripPointButton = document.querySelector(`.trip-controls__new-event`);
@@ -131,8 +134,5 @@ destinationsData.load();
 availableOffersData.load();
 tripPointsList.showLoadingMessage();
 tripPointsData.load()
-  .then((data) => {
-    return data;
-  })
   .then(() => tripPointsList.hideMessage())
   .catch(() => tripPointsList.showErrorMessage());

@@ -1,20 +1,11 @@
 
 /**
  * Глубокое копирование объекта
- * @param {Object} original
- * @return {Object}
+ * @param {*} original
+ * @return {*}
  */
-function deepCopy(original) {
-  let clone = Object.create(Object.getPrototypeOf(original));
-  let keys = Object.getOwnPropertyNames(original);
-  for (let i = 0; i < keys.length; i++) {
-    let descriptor = Object.getOwnPropertyDescriptor(original, keys[i]);
-    if (descriptor.value && typeof descriptor.value === `object`) {
-      descriptor.value = deepCopy(descriptor.value);
-    }
-    Object.defineProperty(clone, keys[i], descriptor);
-  }
-  return clone;
+function deepCopyData(original) {
+  return JSON.parse(JSON.stringify(original));
 }
 
-export {deepCopy};
+export {deepCopyData};

@@ -2,7 +2,7 @@ import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from '../utils/dom-utils.js';
 import {TripPointType} from '../trip-point-type.js';
-import {deepCopy} from '../utils/data-utils.js';
+import {deepCopyData} from '../utils/data-utils.js';
 import {calcDurationString} from '../utils/date-utils.js';
 import {calcTripPointCost} from '../utils/trip-utils.js';
 
@@ -16,10 +16,11 @@ export default class TripPoint extends Component {
    */
   constructor(data) {
     super();
-    this._data = deepCopy(data);
-
+    this._data = deepCopyData(data);
     this._onEdit = null;
+    this._onAddOffer = null;
     this._onEditClick = this._onEditClick.bind(this);
+    this._onAddOfferClick = this._onAddOfferClick.bind(this);
   }
 
   /**
@@ -28,6 +29,14 @@ export default class TripPoint extends Component {
    */
   set onEdit(fn) {
     this._onEdit = fn;
+  }
+
+  /**
+   * Задает обработчик события добавления оффера к точке
+   * @param {Function} fn - обработчки события
+   */
+  set onAddOffer(fn) {
+    this._onAddOffer = fn;
   }
 
   get data() {
@@ -39,6 +48,11 @@ export default class TripPoint extends Component {
    */
   bind() {
     this._element.addEventListener(`click`, this._onEditClick);
+
+    const offerButtons = this._element.querySelectorAll(`.trip-point__offer`);
+    for (const offerButton of offerButtons) {
+      offerButton.addEventListener(`click`, this._onAddOfferClick);
+    }
   }
 
   /**
@@ -46,6 +60,11 @@ export default class TripPoint extends Component {
    */
   unbind() {
     this._element.removeEventListener(`click`, this._onEditClick);
+
+    const offerButtons = this._element.querySelectorAll(`.trip-point__offer`);
+    for (const offerButton of offerButtons) {
+      offerButton.removeEventListener(`click`, this._onAddOfferClick);
+    }
   }
 
   /**
@@ -147,5 +166,17 @@ export default class TripPoint extends Component {
       return;
     }
     this._onEdit();
+  }
+
+  _onAddOfferClick(evt) {
+    if (typeof this._onAddOffer === `function`) {
+      const offerTitle = evt.target.textContent.split(` + `)[0];
+      const newData = deepCopyData(this._data);
+      const offer = newData.offers.find((item) => item.title === offerTitle);
+      if (offer) {
+        offer.accepted = true;
+      }
+      this._onAddOffer(newData);
+    }
   }
 }

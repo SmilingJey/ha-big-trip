@@ -211,6 +211,15 @@ export default class TripPointsList extends Component {
       this._tripPoints.splice(this._tripPoints.indexOf(tripPoint), 1);
       tripPoint.unrender();
     };
+
+    tripPoint.onAddOffer = (newData) => {
+      this._tripPointsData.updateTripPoint(newData)
+        .then(() => this.hideMessage())
+        .catch(() => {
+          this.showErrorMessage();
+        });
+    };
+
     return tripPoint;
   }
 
@@ -230,7 +239,9 @@ export default class TripPointsList extends Component {
     tripPointEdit.onSubmit = (newData) => {
       tripPointEdit.savingBlock();
       this._tripPointsData.updateTripPoint(newData)
+        .then(() => this.hideMessage())
         .catch(() => {
+          this.showErrorMessage();
           tripPointEdit.shake();
           tripPointEdit.changesUnsaved();
           tripPointEdit.unblock();
@@ -249,7 +260,9 @@ export default class TripPointsList extends Component {
     tripPointEdit.onDelete = () => {
       tripPointEdit.deletingBlock();
       this._tripPointsData.deleteTripPoint(data)
+        .then(() => this.hideMessage())
         .catch(() => {
+          this.showErrorMessage();
           tripPointEdit.changesUnsaved();
           tripPointEdit.unblock();
         });
