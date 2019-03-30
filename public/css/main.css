@@ -647,9 +647,10 @@ input[type=radio]:checked + .trip-sorting__item {
 
 .point__input--date-start {
   margin-right: 10px;
+  width: 116px;
 }
 .point__input--date-end {
-
+  width: 116px;
 }
 
 @keyframes shake {
