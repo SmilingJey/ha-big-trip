@@ -46,7 +46,7 @@ a:hover {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-left: 160px;
+  padding-left: 152px;
   padding-top: 24px;
 }
 
@@ -75,10 +75,10 @@ a:hover {
   font-style: normal;
   position: absolute;
   height: 42px;
-  left: -85px;
+  left: -59px;
   line-height: calc(42px - 4px);
   text-align: center;
-  top: -8px;
+  top: 0px;
   width: 42px;
 }
 
@@ -146,6 +146,10 @@ a.view-switch__item--active:link {
   position: absolute;
 }
 
+.trip-filter__container {
+  display: inline-block;
+}
+
 .trip-filter__item {
   font-size: var(--font-size-smaller);
   font-weight: 800;
@@ -156,6 +160,10 @@ a.view-switch__item--active:link {
 }
 .trip-filter__item:hover {
   opacity: 0.5;
+}
+
+input:disabled + .trip-filter__item {
+  opacity: 0.3;
 }
 
 input[type=radio]:checked + .trip-filter__item {
@@ -189,7 +197,7 @@ input[type=radio]:checked + .trip-filter__item {
 .trip-sorting {
   box-sizing: border-box;
   margin-top: 24px;
-  padding-left: 160px;
+  /*padding-left: 160px;*/
 }
 
 .trip-sorting input[type=radio] {
@@ -220,16 +228,21 @@ input[type=radio]:checked + .trip-sorting__item {
   color: var(--text-color);
 }
 
+.trip-sorting__item--day {
+  margin-left: 0;
+  margin-right: 85px;
+}
+
 .trip-sorting__item--event {
-  margin-right: 180px;
+  margin-right: 240px;
 }
 
 .trip-sorting__item--time {
-  margin-right: 120px;
+  margin-right: 145px;
 }
 
 .trip-sorting__item--price {
-  margin-right: 48px;
+  margin-right: 120px;
 }
 
 .trip-sorting__item--offers {
@@ -245,7 +258,7 @@ input[type=radio]:checked + .trip-sorting__item {
 }
 
 .trip-day__info {
-  flex-basis: 48px;
+  flex-basis: 60px;
   flex-grow: 0;
   flex-shrink: 0;
   margin-right: 15px;
@@ -291,14 +304,14 @@ input[type=radio]:checked + .trip-sorting__item {
 .trip-point {
   align-items: flex-start;
   display: flex;
-  margin-bottom: 80px;
+  margin-bottom: 40px;
   position: relative;
   margin-left: 17px;
   cursor: pointer;
 }
 
 .trip-point__title {
-  flex-basis: 248px;
+  flex-basis: 250px;
   flex-shrink: 0;
   flex-grow: 0;
   font-weight: 500;
@@ -313,7 +326,7 @@ input[type=radio]:checked + .trip-sorting__item {
 .trip-point__schedule {
   display: flex;
   flex-direction: column;
-  flex-basis: 178px;
+  flex-basis: 260px;
   flex-shrink: 0;
   flex-grow: 0;
   margin: 0;
@@ -352,6 +365,8 @@ input[type=radio]:checked + .trip-sorting__item {
   opacity: 0.7;
   padding: 0;
   transition: opacity 0.1s ease-out;
+  width: 100%;
+  padding-bottom: 10px;
 }
 
 .trip-point__offer:hover {
@@ -375,7 +390,7 @@ input[type=radio]:checked + .trip-sorting__item {
   margin-bottom: 30px;
 }
 .trip-points > .point .point__date {
-  display: flex;
+  display: none;
 }
 .trip-points > .point .point__input {
  border-bottom: 1px solid #0D8AE4;
@@ -420,8 +435,8 @@ input[type=radio]:checked + .trip-sorting__item {
   position: relative;
   padding: 0 2px 6px;
   display: flex;
-  width: 235px;
-  margin-right: 5px;
+  width: 215px;
+  margin-right: 10px;
   margin-top: 4px;
   border-bottom: 1px solid #0D8AE4;
 }
@@ -461,7 +476,7 @@ input[type=radio]:checked + .trip-sorting__item {
   width: 95px;
   box-sizing: border-box;
   position: relative;
-  margin-right: 30px;
+  margin-right: 20px;
 }
 .point__price-currency {
   font-size: 17px;
@@ -631,4 +646,51 @@ input[type=radio]:checked + .trip-sorting__item {
 .statistic__item {
   margin-bottom: 95px;
   width: 900px;
+}
+
+.point__time {
+  width: 270px;
+  margin-right: 10px;
+}
+
+.point__input--date-start {
+  margin-right: 10px;
+  width: 126px;
+}
+.point__input--date-end {
+  width: 126px;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+.shake {
+  animation: shake 0.6s;
+}
+
+.unsaved {
+  border: 1px solid red !important;
+}
+
+.trip-point-message {
+  text-align: center;
+  padding-top: 30px;
 }

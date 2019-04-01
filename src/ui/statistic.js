@@ -1,7 +1,7 @@
 import Component from "./component.js";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import {TripPointType} from './trip-point-type.js';
+import TripPointType from '../data/trip-point-type.js';
 
 const BAR_HEIGHT = 55;
 
@@ -170,7 +170,7 @@ const timeSpentChartConfig = {
     },
     title: {
       display: true,
-      text: `TRANSPORT`,
+      text: `TIME SPENT`,
       fontColor: `#000000`,
       fontSize: 23,
       position: `left`
@@ -209,6 +209,9 @@ const timeSpentChartConfig = {
   }
 };
 
+/**
+ * Компонент отображает статистику путешествия
+ */
 export default class Statistic extends Component {
   constructor(getDataCallback) {
     super();
@@ -219,22 +222,34 @@ export default class Statistic extends Component {
   }
 
   get template() {
-    const templateElement = document.querySelector(`#trip-statistic`).content;
+    const templateElement = document.querySelector(`#trip-statistic-template`).content;
     const element = templateElement.querySelector(`.statistic`).cloneNode(true);
     return element;
   }
 
   update() {
     const data = this._getData();
+    if (!data) {
+      return;
+    }
     this._updateMoneyChart(data);
     this._updateTransportChart(data);
     this._updateTimeSpentChart(data);
   }
 
+  _getUiElements() {
+    this._ui.moneyCanvasElement = this._element.querySelector(`.statistic__money`);
+    this._ui.transportCanvasElement = this._element.querySelector(`.statistic__transport`);
+    this._ui.timeSpentCanvasElement = this._element.querySelector(`.statistic__time-spend`);
+  }
+
+  /**
+   * Обновление диаграммы стоимости
+   * @param {Array} data - массив точек путешествия
+   */
   _updateMoneyChart(data) {
-    const moneyChartElement = this._element.querySelector(`.statistic__money`);
     if (!this._moneyChart) {
-      this._moneyChart = new Chart(moneyChartElement, moneyChartConfig);
+      this._moneyChart = new Chart(this._ui.moneyCanvasElement, moneyChartConfig);
     }
 
     const moneyStatistic = {};
@@ -254,15 +269,18 @@ export default class Statistic extends Component {
 
     this._moneyChart.config.data.datasets[0].data = values;
     this._moneyChart.data.labels = labels;
-    moneyChartElement.height = BAR_HEIGHT * labels.length;
+    this._ui.moneyCanvasElement.height = BAR_HEIGHT * labels.length;
     this._moneyChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
     this._moneyChart.update();
   }
 
+  /**
+   * Обновление диаграммы использования транспорта
+   * @param {Array} data - массив точек путешествия
+   */
   _updateTransportChart(data) {
-    const transportChartElement = this._element.querySelector(`.statistic__transport`);
     if (!this._transportChart) {
-      this._transportChart = new Chart(transportChartElement, transportChartConfig);
+      this._transportChart = new Chart(this._ui.transportCanvasElement, transportChartConfig);
     }
 
     const transportStatistic = {};
@@ -284,24 +302,27 @@ export default class Statistic extends Component {
 
     this._transportChart.config.data.datasets[0].data = values;
     this._transportChart.data.labels = labels;
-    transportChartElement.height = BAR_HEIGHT * labels.length;
+    this._ui.transportCanvasElement.height = BAR_HEIGHT * labels.length;
     this._transportChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
     this._transportChart.update();
   }
 
+  /**
+   * Обновление диаграммы проведенного времени
+   * @param {Array} data - массив точек путешествия
+   */
   _updateTimeSpentChart(data) {
-    const timeSpentChartElement = this._element.querySelector(`.statistic__time-spend`);
     if (!this._timeSpentChart) {
-      this._timeSpentChart = new Chart(timeSpentChartElement, timeSpentChartConfig);
+      this._timeSpentChart = new Chart(this._ui.timeSpentCanvasElement, timeSpentChartConfig);
     }
 
     const timeSpentStatistic = {};
 
     for (const tripPoint of data) {
       if (timeSpentStatistic.hasOwnProperty(tripPoint.type)) {
-        timeSpentStatistic[tripPoint.type] += this._getTripPointMinuteDuration(tripPoint);
+        timeSpentStatistic[tripPoint.type] += Statistic._getDurationInMinutes(tripPoint);
       } else {
-        timeSpentStatistic[tripPoint.type] = this._getTripPointMinuteDuration(tripPoint);
+        timeSpentStatistic[tripPoint.type] = Statistic._getDurationInMinutes(tripPoint);
       }
     }
 
@@ -313,13 +334,13 @@ export default class Statistic extends Component {
 
     this._timeSpentChart.config.data.datasets[0].data = values;
     this._timeSpentChart.data.labels = labels;
-    timeSpentChartElement.height = BAR_HEIGHT * labels.length;
+    this._ui.timeSpentCanvasElement.height = BAR_HEIGHT * labels.length;
     this._timeSpentChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
     this._timeSpentChart.update();
   }
 
-  _getTripPointMinuteDuration(tripPoint) {
-    return Math.abs(tripPoint.startTime - tripPoint.endTime) / 60 / 1000;
+  static _getDurationInMinutes(tripPoint) {
+    return Math.round(Math.abs(tripPoint.dateTo - tripPoint.dateFrom) / 60 / 1000);
   }
 }
 
