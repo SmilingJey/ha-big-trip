@@ -5,7 +5,7 @@ const Method = {
   DELETE: `DELETE`
 };
 
-export default class API {
+export default class ServerAPI {
   constructor({endPoint, authorization, resourceName}) {
     this._endPoint = endPoint;
     this._authorization = authorization;
@@ -19,12 +19,12 @@ export default class API {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(API.toJSON);
+      .then(ServerAPI.toJSON);
   }
 
   getResources() {
     return this._load({url: this._resourceName})
-      .then(API.toJSON);
+      .then(ServerAPI.toJSON);
   }
 
   updateResource({id, data}) {
@@ -34,7 +34,7 @@ export default class API {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(API.toJSON);
+      .then(ServerAPI.toJSON);
   }
 
   deleteResource({id}) {
@@ -47,7 +47,7 @@ export default class API {
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {
     headers.append(`Authorization`, this._authorization);
     return fetch(`${this._endPoint}/${url}`, {method, body, headers})
-      .then(API.checkStatus);
+      .then(ServerAPI.checkStatus);
   }
 
   static checkStatus(response) {

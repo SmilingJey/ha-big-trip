@@ -17,10 +17,17 @@ export default class TotalCost extends Component {
   }
 
   update() {
-    const totalCostElement = this._element.querySelector(`.trip__total-cost`);
-    totalCostElement.textContent = `€ ` + this._calcTotalCost();
+    this._ui.totalCostElement.textContent = `€ ` + this._calcTotalCost();
   }
 
+  _getUiElements() {
+    this._ui.totalCostElement = this._element.querySelector(`.trip__total-cost`);
+  }
+
+  /**
+   * Вычисление полной стоимости путешествия
+   * @return {String}
+   */
   _calcTotalCost() {
     const data = this._getDataCallback();
     if (!data) {

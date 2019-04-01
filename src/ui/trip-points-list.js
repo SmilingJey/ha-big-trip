@@ -4,7 +4,8 @@ import {removeChilds} from '../utils/dom-utils.js';
 import {calcDaysDiff, compareDate} from '../utils/date-utils.js';
 import TripPoint from './trip-point.js';
 import TripPointEdit from './trip-point-edit.js';
-import {getTripStartDate} from '../utils/trip-utils.js';
+import {getTripStartDate, getTripEndDate} from '../utils/trip-utils.js';
+import TripPointsData from '../data/trip-points-data.js';
 
 /**
  * Класс описывает список отображения точек путешествия
@@ -15,6 +16,7 @@ export default class TripPointsList extends Component {
     this._sortFunction = (point1, point2) => compareDate(point1.dateFrom, point2.dateFrom);
     this._filterFunction = null;
     this._tripPointEdit = null;
+    this._newTripPointEdit = null;
     this._tripPoints = [];
     this._tripPointsData = tripPointsData;
     this._destinationsData = destinationsData;
@@ -74,18 +76,25 @@ export default class TripPointsList extends Component {
     }
 
     const tripPointsFragment = document.createDocumentFragment();
-    const tripStartDate = getTripStartDate(this._getData());
 
+    if (this._newTripPointEdit) {
+      tripPointsFragment.appendChild(this._newTripPointEdit.render());
+    }
+
+    const tripStartDate = getTripStartDate(this._getData());
     let prevTripPointDate = 0;
     let dayElement = null;
+    let dayItemsElement = null;
     for (const tripPointData of displayedTripPoints) {
       if (calcDaysDiff(prevTripPointDate, tripPointData.dateFrom) !== 0) {
         dayElement = this._createTripDayElement(tripPointData.dateFrom, tripStartDate);
+        dayItemsElement = dayElement.querySelector(`.trip-day__items`);
         tripPointsFragment.appendChild(dayElement);
       }
       const tripPoint = this._createTripPoint(tripPointData);
       this._tripPoints.push(tripPoint);
-      this._addTripPointElementToDayElement(dayElement, tripPoint.render());
+      dayItemsElement.appendChild(tripPoint.render());
+
       prevTripPointDate = tripPointData.dateFrom;
     }
     this._element.appendChild(tripPointsFragment);
@@ -115,26 +124,54 @@ export default class TripPointsList extends Component {
     this.update();
   }
 
-  /**
-   * Открыть точку путешествия в режиме редактирования
-   * @param {Object} tripPointData - данные точки путешествия
-   */
-  openTripPointInEditMode({id}) {
-    const tripPoint = this._tripPoints.find((point) => point.data.id === id);
-    if (tripPoint) {
-      if (this._tripPointEdit) {
-        this._tripPointEdit.cancelEdit();
-      }
-      this._tripPointEdit = this._createTripPointEdit(tripPoint.data);
-      tripPoint.element.parentElement.replaceChild(this._tripPointEdit.render(), tripPoint.element);
-      this._tripPoints.splice(this._tripPoints.indexOf(tripPoint), 1);
-      tripPoint.unrender();
-      try {
-        this._tripPointEdit.element.scrollIntoView();
-      } catch (err) {
-        // console.log(err)
-      }
-    }
+  createNewTripPoint() {
+    const data = TripPointsData.createEmptyTripPoint({
+      type: `taxi`,
+      dateFrom: getTripEndDate(this._tripPointsData.getTripPoints()),
+      dateTo: getTripEndDate(this._tripPointsData.getTripPoints()),
+      offers: this._availableOffersData.getOffers(`taxi`),
+    });
+
+    this._newTripPointEdit = new TripPointEdit({
+      data,
+      destinationsData: this._destinationsData,
+      availableOffersData: this._availableOffersData,
+    });
+
+    // сохранение изменений
+    this._newTripPointEdit.onSubmit = (newData) => {
+      this._newTripPointEdit.savingBlock();
+      this._tripPointsData.addTripPoint(newData)
+        .then(() => {
+          this._newTripPointEdit.unrender();
+          this._newTripPointEdit = null;
+          this.hideMessage();
+        })
+        .catch(() => {
+          this.showErrorMessage();
+          this._newTripPointEdit.shake();
+          this._newTripPointEdit.changesUnsaved();
+          this._newTripPointEdit.unblock();
+        });
+    };
+
+    // выход из режима редактирования
+    this._newTripPointEdit.onCancel = () => {
+      this._newTripPointEdit.unrender();
+      this._newTripPointEdit = null;
+      this.hideMessage();
+      this.update();
+    };
+
+    // удаление точки путешествия
+    this._newTripPointEdit.onDelete = () => {
+      this._newTripPointEdit.unrender();
+      this._newTripPointEdit = null;
+      this.hideMessage();
+      this.update();
+    };
+
+    this.update();
   }
 
   /**
@@ -170,6 +207,10 @@ export default class TripPointsList extends Component {
    * Удаляет все точки путешествия
    */
   _unrenderContent() {
+    if (this._newTripPointEdit) {
+      this._newTripPointEdit.unrender();
+    }
+
     if (this._tripPointEdit) {
       this._tripPointEdit.unrender();
       this._tripPointEdit = null;
@@ -285,15 +326,5 @@ export default class TripPointsList extends Component {
     const dayTitleElement = dayElement.querySelector(`.trip-day__title`);
     dayTitleElement.textContent = moment(date).format(`MMM D`);
     return dayElement;
-  }
-
-  /**
-   * Добавляет элемент точки путешестия в элемент дня путешествия
-   * @param {Node} dayElement - элемент дня путешествия
-   * @param {Node} tripPoinElement - элемент точки путешествия
-   */
-  _addTripPointElementToDayElement(dayElement, tripPoinElement) {
-    const tripPointsConteinerElement = dayElement.querySelector(`.trip-day__items`);
-    tripPointsConteinerElement.appendChild(tripPoinElement);
   }
 }

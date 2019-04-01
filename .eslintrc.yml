@@ -17,4 +17,4 @@ rules:
   max-lines-per-function: ["error", 100]
   max-nested-callbacks: ["error", 1]
   max-params: ["error", 2]
-  max-statements: ["error", 20]
+  max-statements: ["error", 30]

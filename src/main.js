@@ -7,10 +7,10 @@ import DestinationsData from './data/destinations-data.js';
 import AvailableOffersData from './data/available-offers-data.js';
 import TripPointsData from './data/trip-points-data.js';
 import {compareDate} from './utils/date-utils.js';
-import {calcTripPointCost, getTripStartDate} from './utils/trip-utils.js';
+import {calcTripPointCost} from './utils/trip-utils.js';
 
 
-const AUTHORIZATION = `Basic smilingjey8`;
+const AUTHORIZATION = `Basic smilingjey9`;
 const END_POINT = `https://es8-demo-srv.appspot.com/big-trip`;
 
 // компоненты доступа к данным
@@ -84,23 +84,8 @@ tableLinkElement.addEventListener(`click`, (evt) => {
 });
 
 // создание новой точки путешествия
-function onNewTripPointClick() {
-  const newTaskData = TripPointsData.createEmptyTripPoint({
-    type: `taxi`,
-    dateFrom: getTripStartDate(tripPointsData.getTripPoints()),
-    dateTo: getTripStartDate(tripPointsData.getTripPoints()),
-    offers: availableOffersData.getOffers(`taxi`),
-  });
-
-  tripPointsData.addTripPoint(newTaskData)
-    .then((data) => {
-      tripPointsList.hideMessage();
-      tripPointsList.openTripPointInEditMode(data);
-    })
-    .catch(() => tripPointsList.showErrorMessage());
-}
 const newTripPointButton = document.querySelector(`.trip-controls__new-event`);
-newTripPointButton.addEventListener(`click`, onNewTripPointClick);
+newTripPointButton.addEventListener(`click`, tripPointsList.createNewTripPoint.bind(tripPointsList));
 
 // сортировки списка точек путешествия
 const sortingElement = document.querySelector(`.trip-sorting`);
@@ -122,18 +107,17 @@ const sortingFunctions = {
   [`price`]: (point1, point2) => calcTripPointCost(point1) - calcTripPointCost(point2),
 };
 
-function onSortChange(evt) {
+sortingElement.addEventListener(`change`, (evt) => {
   if (sortingFunctions.hasOwnProperty(evt.target.value)) {
     tripPointsList.sortFunction = sortingFunctions[evt.target.value];
   }
-}
-
-sortingElement.addEventListener(`change`, onSortChange);
+});
 
 // загрузка данных
-destinationsData.load();
-availableOffersData.load();
 tripPointsList.showLoadingMessage();
-tripPointsData.load()
-  .then(() => tripPointsList.hideMessage())
+Promise.all([
+  destinationsData.load(),
+  availableOffersData.load(),
+  tripPointsData.load(),
+]).then(() => tripPointsList.hideMessage())
   .catch(() => tripPointsList.showErrorMessage());

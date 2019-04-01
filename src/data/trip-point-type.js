@@ -23,10 +23,28 @@ const TripPointType = {
     destinationText: `Flight to`,
     isTransport: true,
   },
+  [`ship`]: {
+    icon: `🛳️`,
+    name: `Ship`,
+    destinationText: `Ship to`,
+    isTransport: true,
+  },
+  [`transport`]: {
+    icon: `🚊`,
+    name: `Transport`,
+    destinationText: `Transport to`,
+    isTransport: true,
+  },
+  [`drive`]: {
+    icon: `🚗`,
+    name: `Drive`,
+    destinationText: `Drive to`,
+    isTransport: true,
+  },
   [`check-in`]: {
     icon: `🏨`,
     name: `Hotel`,
-    destinationText: `Check into`,
+    destinationText: `Check`,
     isTransport: false,
   },
   [`sightseeing`]: {
@@ -34,7 +52,13 @@ const TripPointType = {
     name: `Sightseeing`,
     destinationText: `Sightseeing`,
     isTransport: false,
-  }
+  },
+  [`restaurant`]: {
+    icon: `🍴`,
+    name: `Restaurant`,
+    destinationText: `Restaurant in`,
+    isTransport: false,
+  },
 };
 
-export {TripPointType};
+export default TripPointType;

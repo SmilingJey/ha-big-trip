@@ -1,4 +1,4 @@
-import API from '../api.js';
+import ServerAPI from '../server-api.js';
 
 /**
  * Класс содержиет данные задач
@@ -6,7 +6,7 @@ import API from '../api.js';
 export default class TripPointsData {
   constructor({END_POINT, AUTHORIZATION}) {
     this._data = null;
-    this._api = new API({
+    this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
       resourceName: `points`,
@@ -124,7 +124,7 @@ export default class TripPointsData {
     data.type = data.type ? data.type : `taxi`;
     data.destination = data.destination ? data.destination : {
       name: `New point`,
-      description: `Select destination to view description`,
+      description: `No descrition for this destination`,
       pictures: [],
     };
     data.dateFrom = data.dateFrom ? data.dateFrom : Date.now();

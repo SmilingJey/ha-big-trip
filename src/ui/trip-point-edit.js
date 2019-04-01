@@ -1,7 +1,7 @@
 import Component from './component.js';
 import * as moment from 'moment';
 import {removeChilds} from '../utils/dom-utils.js';
-import {TripPointType} from '../trip-point-type.js';
+import TripPointType from '../data/trip-point-type.js';
 import flatpickr from "flatpickr";
 import {deepCopyData} from '../utils/data-utils.js';
 import {debounce} from '../utils/events-utils.js';
@@ -59,18 +59,32 @@ export default class TripPointEdit extends Component {
     this._onCancel = fn;
   }
 
-  /**
-   * Установка обработчиков событий
-   */
-  bind() {
-    this._element.querySelector(`form`).addEventListener(`submit`, this._onSubmitButtonClick);
-    this._element.querySelector(`button[type=reset]`).addEventListener(`click`, this._onDeleteButtonClick);
-    this._element.querySelector(`.travel-way__select`).addEventListener(`click`, this._onSelectTripPointTypeClick);
-    this._element.querySelector(`.point__destination-input`).addEventListener(`change`, this._onDestinationChange);
-    this._element.querySelector(`.point__destination-input`).addEventListener(`keyup`, this._onDestinationKeyUp);
+  get template() {
+    const templateElement = document.querySelector(`#trip-point-edit-template`).content;
+    const element = templateElement.querySelector(`.point`).cloneNode(true);
+    return element;
+  }
 
-    const dateStartInputElement = this._element.querySelector(`input[name='date-start']`);
-    this._flatpickrDateFrom = flatpickr(dateStartInputElement, {
+  update() {
+    this._updateType(this._data.type);
+    this._updateDestination();
+    this._updateDestinationsDatalist();
+    this._updateDate();
+    this._updatePrice();
+    this._updateOffers();
+    this._updateIsFavotire();
+    this._updateDestinationText(this._data.destination.description);
+    this._updateDestinationImages(this._data.destination.pictures);
+  }
+
+  bind() {
+    this._ui.formElement.addEventListener(`submit`, this._onSubmitButtonClick);
+    this._ui.deleteButtonElement.addEventListener(`click`, this._onDeleteButtonClick);
+    this._ui.typeSelectElement.addEventListener(`click`, this._onSelectTripPointTypeClick);
+    this._ui.destinationInputElement.addEventListener(`change`, this._onDestinationChange);
+    this._ui.destinationInputElement.addEventListener(`keyup`, this._onDestinationKeyUp);
+
+    this._flatpickrDateFrom = flatpickr(this._ui.dateStartElement, {
       enableTime: true,
       // eslint-disable-next-line camelcase
       time_24hr: true,
@@ -82,8 +96,7 @@ export default class TripPointEdit extends Component {
       ],
     });
 
-    const dateEndInputElement = this._element.querySelector(`input[name='date-end']`);
-    this._flatpickrDateTo = flatpickr(dateEndInputElement, {
+    this._flatpickrDateTo = flatpickr(this._ui.dateEndElement, {
       enableTime: true,
       // eslint-disable-next-line camelcase
       time_24hr: true,
@@ -98,15 +111,12 @@ export default class TripPointEdit extends Component {
     document.addEventListener(`keydown`, this._onESCkeydown);
   }
 
-  /**
-   * Удаление обработчиков событий
-   */
   unbind() {
-    this._element.querySelector(`.point__button--save`).removeEventListener(`submit`, this._onSubmitButtonClick);
-    this._element.querySelector(`button[type=reset]`).removeEventListener(`click`, this._onDeleteButtonClick);
-    this._element.querySelector(`.travel-way__select`).removeEventListener(`click`, this._onSelectTripPointTypeClick);
-    this._element.querySelector(`.point__destination-input`).removeEventListener(`change`, this._onDestinationChange);
-    this._element.querySelector(`.point__destination-input`).removeEventListener(`keyup`, this._onDestinationKeyUp);
+    this._ui.formElement.removeEventListener(`submit`, this._onSubmitButtonClick);
+    this._ui.deleteButtonElement.removeEventListener(`click`, this._onDeleteButtonClick);
+    this._ui.typeSelectElement.removeEventListener(`click`, this._onSelectTripPointTypeClick);
+    this._ui.destinationInputElement.removeEventListener(`change`, this._onDestinationChange);
+    this._ui.destinationInputElement.removeEventListener(`keyup`, this._onDestinationKeyUp);
 
     document.removeEventListener(`keydown`, this._onESCkeydown);
     if (this._flatpickrDateFrom) {
@@ -117,33 +127,9 @@ export default class TripPointEdit extends Component {
     }
   }
 
-  /**
-   * Возвращает пустой шаблон редактирования точки путешествия
-   * @return {Node} - шаблон редактирования точки путешествия
-   */
-  get template() {
-    const templateElement = document.querySelector(`#trip-point-edit-template`).content;
-    const element = templateElement.querySelector(`.point`).cloneNode(true);
-    return element;
-  }
 
   /**
-   * Обновляет отображение элемента
-   */
-  update() {
-    this._updateType(this._data.type);
-    this._updateDestination();
-    this._updateDestinationsDatalist();
-    this._updateDate();
-    this._updatePrice();
-    this._updateOffers();
-    this._updateIsFavotire();
-    this._updateDestinationText(this._data.destination.description);
-    this._updateDestinationImages(this._data.destination.pictures);
-  }
-
-  /**
-   * Потрясти
+   * Потрясти карточку
    */
   shake() {
     const ANIMATION_TIMEOUT = 600;
@@ -153,23 +139,36 @@ export default class TripPointEdit extends Component {
     }, ANIMATION_TIMEOUT);
   }
 
+  /**
+   * Блокировка карточки при сохранении
+   */
   savingBlock() {
-    this._element.querySelector(`.point__button--save`).textContent = `saving ...`;
-    this.setInputBlock(true);
+    this._ui.saveButtonElement.textContent = `saving ...`;
+    this._setInputBlock(true);
   }
 
+  /**
+   * Блокировка карточки при удалении
+   */
   deletingBlock() {
-    this._element.querySelector(`button[type=reset]`).textContent = `deleting ...`;
-    this.setInputBlock(true);
+    this._ui.deleteButtonElement.textContent = `deleting ...`;
+    this._setInputBlock(true);
   }
 
+  /**
+   * Разблокировка карточки
+   */
   unblock() {
-    this._element.querySelector(`.point__button--save`).textContent = `Save`;
-    this._element.querySelector(`button[type=reset]`).textContent = `Delete`;
+    this._ui.saveButtonElement.textContent = `Save`;
+    this._ui.deleteButtonElement.textContent = `Delete`;
     this.setInputBlock(false);
   }
 
-  setInputBlock(isBlock) {
+  /**
+   * Блокировка/Разблокировка полей ввода
+   * @param {Boolean} isBlock - заблокированы ли поля ввода
+   */
+  _setInputBlock(isBlock) {
     const controlElements = this._element.querySelectorAll(`input, button, textarea`);
     for (const controlElement of controlElements) {
       controlElement.disabled = isBlock;
@@ -180,17 +179,32 @@ export default class TripPointEdit extends Component {
     this._element.classList.add(`unsaved`);
   }
 
+  _getUiElements() {
+    this._ui.typeIconElement = this._element.querySelector(`.travel-way__label`);
+    this._ui.destinationLabelElement = this._element.querySelector(`.point__destination-label`);
+    this._ui.destinationInputElement = this._element.querySelector(`.point__destination-input`);
+    this._ui.datalistElement = this._element.querySelector(`#destination-select`);
+    this._ui.dateStartElement = this._element.querySelector(`input[name='date-start']`);
+    this._ui.dateEndElement = this._element.querySelector(`input[name='date-end']`);
+    this._ui.priceElement = this._element.querySelector(`input[name=price]`);
+    this._ui.offersContainerElement = this._element.querySelector(`.point__offers-wrap`);
+    this._ui.destinationTextElement = this._element.querySelector(`.point__destination-text`);
+    this._ui.imagesComtainerElement = this._element.querySelector(`.point__destination-images`);
+    this._ui.favoriteElement = this._element.querySelector(`input[name=favorite]`);
+    this._ui.toogleElement = this._element.querySelector(`.travel-way__toggle`);
+    this._ui.saveButtonElement = this._element.querySelector(`.point__button--save`);
+    this._ui.deleteButtonElement = this._element.querySelector(`button[type=reset]`);
+    this._ui.typeSelectElement = this._element.querySelector(`.travel-way__select`);
+    this._ui.formElement = this._element.querySelector(`form`);
+  }
+
   /**
    * Задает тип события
    * @param {String} type - тип
    */
   _updateType(type) {
-    const typeIconElement = this._element.querySelector(`.travel-way__label`);
-    typeIconElement.textContent = TripPointType[type].icon;
-
-    const destinationLabelElement = this._element.querySelector(`.point__destination-label`);
-    destinationLabelElement.textContent = TripPointType[type].destinationText;
-
+    this._ui.typeIconElement.textContent = TripPointType[type].icon;
+    this._ui.destinationLabelElement.textContent = TripPointType[type].destinationText;
     const selectedRadioElement = this._element.querySelector(`#travel-way-${type}`);
     selectedRadioElement.checked = true;
   }
@@ -199,18 +213,15 @@ export default class TripPointEdit extends Component {
    * Задает название точки назначения
    */
   _updateDestination() {
-    const destinationInputElement = this._element.querySelector(`.point__destination-input`);
-    destinationInputElement.value = this._data.destination.name;
+    this._ui.destinationInputElement.value = this._data.destination.name;
   }
 
   /**
    * Задает список доступных точек назначения
    */
   _updateDestinationsDatalist() {
-    const datalistElement = this._element.querySelector(`#destination-select`);
-    removeChilds(datalistElement);
+    removeChilds(this._ui.datalistElement);
     const destinations = this._destinationsData.getDestinations();
-
     if (destinations) {
       const optionsElements = destinations.map((destination) => {
         const optionsElement = document.createElement(`option`);
@@ -219,7 +230,7 @@ export default class TripPointEdit extends Component {
       });
 
       for (const optionsElement of optionsElements) {
-        datalistElement.appendChild(optionsElement);
+        this._ui.datalistElement.appendChild(optionsElement);
       }
     }
   }
@@ -228,18 +239,15 @@ export default class TripPointEdit extends Component {
    * Задает время начала и окончания события
    */
   _updateDate() {
-    const dateStartElement = this._element.querySelector(`input[name='date-start']`);
-    dateStartElement.value = moment(this._data.dateFrom).format(`D MMM H:mm`);
-    const dateEndElement = this._element.querySelector(`input[name='date-end']`);
-    dateEndElement.value = this._data.dateTo ? moment(this._data.dateTo).format(`D MMM H:mm`) : ``;
+    this._ui.dateStartElement.value = moment(this._data.dateFrom).format(`D MMM H:mm`);
+    this._ui.dateEndElement.value = this._data.dateTo ? moment(this._data.dateTo).format(`D MMM H:mm`) : ``;
   }
 
   /**
    * Задает стоимость
    */
   _updatePrice() {
-    const priceElement = this._element.querySelector(`input[name=price]`);
-    priceElement.value = this._data.price;
+    this._ui.priceElement.value = this._data.price;
   }
 
   /**
@@ -247,15 +255,14 @@ export default class TripPointEdit extends Component {
    * @param {Array} offers - массив с доступными офферами
    */
   _updateOffers() {
-    const offersContainerElement = this._element.querySelector(`.point__offers-wrap`);
-    removeChilds(offersContainerElement);
+    removeChilds(this._ui.offersContainerElement);
     if (this._data.offers && this._data.offers.length) {
-      const offerElements = this._data.offers.map(this._renderTripPointOffer.bind(this));
+      const offerElements = this._data.offers.map(this._createTripPointOffer.bind(this));
       for (const offerElement of offerElements) {
-        offersContainerElement.prepend(offerElement);
+        this._ui.offersContainerElement.prepend(offerElement);
       }
     } else {
-      offersContainerElement.textContent = `No avaliable offres`;
+      this._ui.offersContainerElement.textContent = `No avaliable offres`;
     }
   }
 
@@ -264,7 +271,7 @@ export default class TripPointEdit extends Component {
    * @param {*} offer - параметры оффера
    * @return {Node} - элемент оффера
    */
-  _renderTripPointOffer(offer) {
+  _createTripPointOffer(offer) {
     this._offerId++;
     const offerTemlate = document.querySelector(`#trip-point-edit-offer-template`).content;
     const offerElement = offerTemlate.cloneNode(true);
@@ -287,8 +294,7 @@ export default class TripPointEdit extends Component {
    * @param {String} description - описание
    */
   _updateDestinationText(description) {
-    const destinationTextElement = this._element.querySelector(`.point__destination-text`);
-    destinationTextElement.textContent = description ? description : `No description`;
+    this._ui.destinationTextElement.textContent = description;
   }
 
   /**
@@ -296,14 +302,13 @@ export default class TripPointEdit extends Component {
    * @param {Array} images - массив с изображениями
    */
   _updateDestinationImages(images) {
-    const imagesComtainerElement = this._element.querySelector(`.point__destination-images`);
-    removeChilds(imagesComtainerElement);
+    removeChilds(this._ui.imagesComtainerElement);
     if (!images || !images.length) {
-      imagesComtainerElement.classList.add(`visually-hidden`);
+      this._ui.imagesComtainerElement.classList.add(`visually-hidden`);
     } else {
-      imagesComtainerElement.classList.remove(`visually-hidden`);
-      for (const imageElement of images.map(this._renderDestinationImage)) {
-        imagesComtainerElement.prepend(imageElement);
+      this._ui.imagesComtainerElement.classList.remove(`visually-hidden`);
+      for (const imageElement of images.map(this._createDestinationImage)) {
+        this._ui.imagesComtainerElement.prepend(imageElement);
       }
     }
   }
@@ -313,7 +318,7 @@ export default class TripPointEdit extends Component {
    * @param {*} image - ссылка на изображение
    * @return {Node} - элемент изображения
    */
-  _renderDestinationImage(image) {
+  _createDestinationImage(image) {
     const imageElement = document.createElement(`img`);
     imageElement.src = image.src;
     imageElement.alt = image.description;
@@ -325,17 +330,15 @@ export default class TripPointEdit extends Component {
    * Задает состояние элемента "Избранный"
    */
   _updateIsFavotire() {
-    const favoriteElement = this._element.querySelector(`input[name=favorite]`);
-    favoriteElement.checked = this._data.isFavorite;
+    this._ui.favoriteElement.checked = this._data.isFavorite;
   }
 
   /**
    * Обновление описания точки назначения при её изменении
    */
   _changeDestinationDescription() {
-    const destinationInputElement = document.querySelector(`.point__destination-input`);
-    if (destinationInputElement) {
-      const destinationName = destinationInputElement.value;
+    if (this._ui.destinationInputElement) {
+      const destinationName = this._ui.destinationInputElement.value;
       const destinationDescription = this._destinationsData.getDescription(destinationName);
       this._updateDestinationText(destinationDescription.description);
       this._updateDestinationImages(destinationDescription.pictures);
@@ -369,7 +372,7 @@ export default class TripPointEdit extends Component {
    */
   _onSubmitButtonClick(evt) {
     evt.preventDefault();
-    const formData = new FormData(this._element.querySelector(`form`));
+    const formData = new FormData(this._ui.formElement);
     const newData = this._processForm(formData);
     if (typeof this._onSubmit === `function`) {
       this._onSubmit(newData);
@@ -416,8 +419,7 @@ export default class TripPointEdit extends Component {
       this._updateType(evt.target.value);
       this._data.offers = deepCopyData(this._availableOffersData.getOffers(evt.target.value));
       this._updateOffers();
-      const toogleElement = this._element.querySelector(`.travel-way__toggle`);
-      toogleElement.checked = false;
+      this._ui.toogleElement.checked = false;
     }
   }
 

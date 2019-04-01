@@ -1,4 +1,4 @@
-import API from '../api.js';
+import ServerAPI from '../server-api.js';
 
 /**
  * Отвечает за загрузку и хранение точек назначения
@@ -6,7 +6,7 @@ import API from '../api.js';
 export default class AvailableOffersData {
   constructor({END_POINT, AUTHORIZATION}) {
     this._data = null;
-    this._offersAPI = new API({
+    this._offersAPI = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
       resourceName: `offers`,
@@ -33,7 +33,7 @@ export default class AvailableOffersData {
    */
   getOffers(type) {
     const offersForType = this._data.find((availableOffres) => availableOffres.type === type);
-    return offersForType ? offersForType.offers : null;
+    return offersForType ? offersForType.offers : [];
   }
 
   static parseOffer(data) {

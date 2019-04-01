@@ -1,7 +1,7 @@
 import Component from "./component";
 import Filter from "./filter";
 
-const filtersData = [
+const FiltersData = [
   {
     name: `Everything`,
     filterFunction: () => true,
@@ -17,7 +17,7 @@ const filtersData = [
 ];
 
 /**
- * Класс представляет список фильтров
+ * Компонент отображает список фильтров
  */
 export default class FilterList extends Component {
   constructor(getDataCallback) {
@@ -29,35 +29,29 @@ export default class FilterList extends Component {
   }
 
   /**
-   * Установка обработчика события выбора фильтра
+   * Установка обработчика события выбора фильтр
    * @param {Function} fn - обработчик
    */
   set onFilter(fn) {
     this._onFilter = fn;
   }
 
-  /**
-   * Возвращает пустой шаблон контейнера фильтров
-   */
   get template() {
     const elem = document.createElement(`form`);
     elem.classList.add(`trip-filter`);
     return elem;
   }
 
-  /**
-   * Обновление списка фильтров
-   */
   update() {
     for (const filter of this._filters) {
       filter.unrender();
     }
     const data = this._getDataCallback();
-    for (const filterData of filtersData) {
+    for (const filterData of FiltersData) {
       filterData.isActive = filterData.name === this._activeFilterName;
       filterData.disabled = !data || !data.filter(filterData.filterFunction).length;
     }
-    this._filters = filtersData.map(this._createFilter.bind(this));
+    this._filters = FiltersData.map(this._createFilter.bind(this));
     const filtersFragment = document.createDocumentFragment();
     for (const filter of this._filters) {
       filtersFragment.appendChild(filter.render());
@@ -65,9 +59,6 @@ export default class FilterList extends Component {
     this._element.appendChild(filtersFragment);
   }
 
-  /**
-   * Удаление компонента
-   */
   unrender() {
     for (const filter of this._filters) {
       filter.unrender();
