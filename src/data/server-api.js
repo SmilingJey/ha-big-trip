@@ -12,6 +12,11 @@ export default class ServerAPI {
     this._resourceName = resourceName;
   }
 
+  getResources() {
+    return this._load({url: this._resourceName})
+      .then(ServerAPI.toJSON);
+  }
+
   createResource({data}) {
     return this._load({
       url: this._resourceName,
@@ -19,11 +24,6 @@ export default class ServerAPI {
       body: JSON.stringify(data),
       headers: new Headers({'Content-Type': `application/json`})
     })
-      .then(ServerAPI.toJSON);
-  }
-
-  getResources() {
-    return this._load({url: this._resourceName})
       .then(ServerAPI.toJSON);
   }
 
@@ -42,6 +42,16 @@ export default class ServerAPI {
       url: `${this._resourceName}/${id}`,
       method: Method.DELETE
     });
+  }
+
+  syncResources({data}) {
+    return this._load({
+      url: `${this._resourceName}/sync`,
+      method: `POST`,
+      body: JSON.stringify(data),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(ServerAPI.toJSON);
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

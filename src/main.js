@@ -51,13 +51,11 @@ filtersList.onFilter = (filterFunction) => {
   tripPointsList.filterFunction = filterFunction;
 };
 
-tripPointsData.onDataChange = () => {
-  tripPointsList.update();
-  schedule.update();
-  totalCost.update();
-  statistic.update();
-  filtersList.update();
-};
+tripPointsData.addListener(tripPointsList.update.bind(tripPointsList));
+tripPointsData.addListener(schedule.update.bind(schedule));
+tripPointsData.addListener(totalCost.update.bind(totalCost));
+tripPointsData.addListener(statistic.update.bind(statistic));
+tripPointsData.addListener(filtersList.update.bind(filtersList));
 
 // переключение между списком и статистикой
 const tableLinkElement = document.querySelector(`a[href="#table"]`);
@@ -111,6 +109,16 @@ sortingElement.addEventListener(`change`, (evt) => {
   if (sortingFunctions.hasOwnProperty(evt.target.value)) {
     tripPointsList.sortFunction = sortingFunctions[evt.target.value];
   }
+});
+
+// переключение между online и offline режимами работы
+window.addEventListener(`offline`, () => {
+  document.title = `${document.title} [OFFLINE]`;
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.split(` [OFFLINE]`)[0];
+  tripPointsData.syncTripPoints();
 });
 
 // загрузка данных

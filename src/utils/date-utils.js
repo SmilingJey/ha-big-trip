@@ -32,7 +32,6 @@ function calcDurationString(startDate, endDate) {
   const MSEC_IN_HOUR = 60 * 60 * 1000;
 
   const dateDiff = moment(endDate).diff(moment(startDate));
-
   const diffFormat = (dateDiff >= MSEC_IN_HOUR) ? `H[H] mm[M]` : `mm[M]`;
   const durationHoursAndMinute = moment(dateDiff).utc().format(diffFormat);
   const durationDays = moment(endDate).diff(moment(startDate), `days`);
