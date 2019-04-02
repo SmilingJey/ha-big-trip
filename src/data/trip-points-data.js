@@ -1,7 +1,11 @@
-import ServerAPI from '../server-api.js';
+import ServerAPI from './server-api.js';
+import OfflineStore from './offline-store.js';
+import OfflineProvider from './offline-provider.js';
+
+const TRIP_POINTS_RESOURSE = `points`;
 
 /**
- * Класс содержиет данные задач
+ * Класс содержит данные точек путешествия
  */
 export default class TripPointsData {
   constructor({END_POINT, AUTHORIZATION}) {
@@ -9,18 +13,36 @@ export default class TripPointsData {
     this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
-      resourceName: `points`,
+      resourceName: TRIP_POINTS_RESOURSE,
+    });
+    this._store = new OfflineStore({key: TRIP_POINTS_RESOURSE, storage: localStorage});
+    this._provider = new OfflineProvider({
+      api: this._api,
+      store: this._store,
+      getId: (data) => data.id,
+      generateId: (data) => {
+        data.id = String(Date.now());
+        return data.id;
+      },
     });
 
-    this._onDataChange = null;
+    this._listeners = [];
   }
 
   /**
-   * Задает колбэк вызываемый при изменении данных
-   * @param {Function} fn - функция вызываемая при изменении данных
+   * Подписка на изменение данных
+   * @param {Function} callback - функция вызываемая при изменении данных
    */
-  set onDataChange(fn) {
-    this._onDataChange = fn;
+  addListener(callback) {
+    this._listeners.push(callback);
+  }
+
+  /**
+   * Удаление подписки на изменение данных
+   * @param {Function} callback
+   */
+  removeListener(callback) {
+    this._listeners = this._listeners.filter((listener) => listener !== callback);
   }
 
   /**
@@ -28,7 +50,7 @@ export default class TripPointsData {
    * @return {Promise} - промис
    */
   load() {
-    return this._api.getResources()
+    return this._provider.getResources()
       .then((data) => data.filter(Boolean))
       .then((data) => data.map(TripPointsData.parseData))
       .then((data) => {
@@ -54,7 +76,7 @@ export default class TripPointsData {
   addTripPoint(tripPointData) {
     const rawData = TripPointsData.toRAW(tripPointData);
     delete rawData.id;
-    return this._api.createResource({data: rawData})
+    return this._provider.createResource({data: rawData})
       .then(TripPointsData.parseData)
       .then((newData) => {
         this._data.push(newData);
@@ -69,7 +91,7 @@ export default class TripPointsData {
    * @return {Promise} - промис
    */
   updateTripPoint(tripPointData) {
-    return this._api.updateResource({
+    return this._provider.updateResource({
       id: tripPointData.id,
       data: TripPointsData.toRAW(tripPointData),
     })
@@ -88,11 +110,15 @@ export default class TripPointsData {
    * @return {Promise} - промис
    */
   deleteTripPoint({id}) {
-    return this._api.deleteResource({id})
+    return this._provider.deleteResource({id})
       .then(() => {
         this._data.splice(this._getTripPointIndexById(id), 1);
         this._emitDataChange(`delete`);
       });
+  }
+
+  syncTripPoints() {
+    this._provider.syncResources();
   }
 
   /**
@@ -109,9 +135,7 @@ export default class TripPointsData {
    * @param {String} eventName - имя события
    */
   _emitDataChange(eventName) {
-    if (typeof this._onDataChange === `function`) {
-      this._onDataChange(eventName);
-    }
+    this._listeners.forEach((listener) => listener(eventName));
   }
 
   /**

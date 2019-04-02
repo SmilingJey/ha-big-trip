@@ -1,4 +1,8 @@
-import ServerAPI from '../server-api.js';
+import ServerAPI from './server-api.js';
+import OfflineStore from './offline-store.js';
+import OfflineProvider from './offline-provider.js';
+
+const AVAILABLE_OFFRES_RESOURSE = `offers`;
 
 /**
  * Отвечает за загрузку и хранение точек назначения
@@ -6,10 +10,18 @@ import ServerAPI from '../server-api.js';
 export default class AvailableOffersData {
   constructor({END_POINT, AUTHORIZATION}) {
     this._data = null;
-    this._offersAPI = new ServerAPI({
+    this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
-      resourceName: `offers`,
+      resourceName: AVAILABLE_OFFRES_RESOURSE,
+    });
+
+    this._store = new OfflineStore({key: AVAILABLE_OFFRES_RESOURSE, storage: localStorage});
+    this._provider = new OfflineProvider({
+      api: this._api,
+      store: this._store,
+      getId: (data) => data.type,
+      generateId: () => ``,
     });
   }
 
@@ -18,8 +30,8 @@ export default class AvailableOffersData {
    * @return {Promise} - промис
    */
   load() {
-    return this._offersAPI.getResources()
-      .then((data) => data.map(AvailableOffersData.parseOffer))
+    return this._provider.getResources()
+      .then((data) => data.map(AvailableOffersData.parseData))
       .then((data) => {
         this._data = data;
         return data;
@@ -36,7 +48,7 @@ export default class AvailableOffersData {
     return offersForType ? offersForType.offers : [];
   }
 
-  static parseOffer(data) {
+  static parseData(data) {
     return {
       type: data.type,
       offers: data.offers.map((offer) => ({

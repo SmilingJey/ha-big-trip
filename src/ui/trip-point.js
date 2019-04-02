@@ -105,7 +105,7 @@ export default class TripPoint extends Component {
     const endDateFormat = isSameDay ? `H:mm` : `D MMM H:mm`;
     const endDateText = hasEndDate ? ` - ` + moment(this._data.dateTo).format(endDateFormat) : ``;
     this._ui.timeElement.textContent = `${startDateText}${endDateText}`;
-    this._ui.textContent = calcDurationString(this._data.dateFrom, this._data.dateTo);
+    this._ui.durationElement.textContent = calcDurationString(this._data.dateFrom, this._data.dateTo);
   }
 
   /**

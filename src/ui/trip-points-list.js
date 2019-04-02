@@ -65,14 +65,9 @@ export default class TripPointsList extends Component {
    */
   update() {
     this._unrenderContent();
-    const displayedTripPoints = this.getDisplayedPoints();
 
     if (this._message) {
       this._element.appendChild(this._createMessage(this._message));
-    }
-
-    if (!displayedTripPoints || displayedTripPoints.length === 0) {
-      return;
     }
 
     const tripPointsFragment = document.createDocumentFragment();
@@ -85,6 +80,7 @@ export default class TripPointsList extends Component {
     let prevTripPointDate = 0;
     let dayElement = null;
     let dayItemsElement = null;
+    const displayedTripPoints = this.getDisplayedPoints();
     for (const tripPointData of displayedTripPoints) {
       if (calcDaysDiff(prevTripPointDate, tripPointData.dateFrom) !== 0) {
         dayElement = this._createTripDayElement(tripPointData.dateFrom, tripStartDate);
@@ -94,7 +90,6 @@ export default class TripPointsList extends Component {
       const tripPoint = this._createTripPoint(tripPointData);
       this._tripPoints.push(tripPoint);
       dayItemsElement.appendChild(tripPoint.render());
-
       prevTripPointDate = tripPointData.dateFrom;
     }
     this._element.appendChild(tripPointsFragment);

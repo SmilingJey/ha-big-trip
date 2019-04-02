@@ -1,4 +1,8 @@
-import ServerAPI from '../server-api.js';
+import ServerAPI from './server-api.js';
+import OfflineStore from './offline-store.js';
+import OfflineProvider from './offline-provider.js';
+
+const DESTINATION_RESOURSE = `destinations`;
 
 /**
  * Отвечает за загрузку и хранение точек назначения
@@ -9,7 +13,15 @@ export default class DestinationsData {
     this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
-      resourceName: `destinations`,
+      resourceName: DESTINATION_RESOURSE,
+    });
+
+    this._store = new OfflineStore({key: DESTINATION_RESOURSE, storage: localStorage});
+    this._provider = new OfflineProvider({
+      api: this._api,
+      store: this._store,
+      getId: (data) => data.name,
+      generateId: () => ``,
     });
   }
 
@@ -18,20 +30,7 @@ export default class DestinationsData {
    * @return {Promise} - промис
    */
   load() {
-    return this._api.getResources()
-      .then((data) => {
-        this._data = data;
-        return data;
-      });
-  }
-
-
-  /**
-   * Загрузка точек назначения
-   * @return {Promise} - промис
-   */
-  load() {
-    return this._api.getResources()
+    return this._provider.getResources()
       .then((data) => {
         this._data = data;
         return data;

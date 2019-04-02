@@ -17,7 +17,7 @@ function calcTripPointCost(tripPointData) {
  */
 function getTripStartDate(tripPoints) {
   if (!tripPoints || tripPoints.length === 0) {
-    return Date.now().toTime();
+    return Date.now();
   }
   return tripPoints.reduce((min, point) => {
     return point.dateFrom < min ? point.dateFrom : min;
@@ -31,7 +31,7 @@ function getTripStartDate(tripPoints) {
  */
 function getTripEndDate(tripPoints) {
   if (!tripPoints || tripPoints.length === 0) {
-    return Date.now().toTime();
+    return Date.now();
   }
   return tripPoints.reduce((max, point) => {
     const date = point.dateTo ? point.dateTo : point.dateFrom;
