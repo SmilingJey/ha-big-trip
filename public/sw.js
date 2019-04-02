@@ -18,7 +18,6 @@ function cacheFiles(cache) {
 }
 
 self.addEventListener(`install`, (evt) => {
-  console.log(`sw, install`, {evt});
   evt.waitUntil(
     caches.open(CACHE_NAME)
       .then(cacheFiles)
@@ -27,10 +26,6 @@ self.addEventListener(`install`, (evt) => {
         throw err;
       })
     );
-});
-
-self.addEventListener(`activate`, (evt) => {
-  console.log(`sw`, `activate`, {evt});
 });
 
 self.addEventListener(`fetch`, (evt) => {

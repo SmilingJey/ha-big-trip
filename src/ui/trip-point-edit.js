@@ -320,7 +320,7 @@ export default class TripPointEdit extends Component {
    */
   _createDestinationImage(image) {
     const imageElement = document.createElement(`img`);
-    imageElement.src = image.src;
+    imageElement.src = image.src.replace(/^http:/, ``);
     imageElement.alt = image.description;
     imageElement.classList.add(`point__destination-image`);
     return imageElement;
