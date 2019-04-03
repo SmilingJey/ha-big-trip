@@ -17,6 +17,7 @@ export default class TripPointsList extends Component {
     this._filterFunction = null;
     this._tripPointEdit = null;
     this._newTripPointEdit = null;
+    this._messageElement = null;
     this._tripPoints = [];
     this._tripPointsData = tripPointsData;
     this._destinationsData = destinationsData;
@@ -66,9 +67,8 @@ export default class TripPointsList extends Component {
   update() {
     this._unrenderContent();
 
-    if (this._message) {
-      this._element.appendChild(this._createMessage(this._message));
-    }
+    this._messageElement = this._createMessage(this._message);
+    this._element.appendChild(this._messageElement);
 
     const tripPointsFragment = document.createDocumentFragment();
 
@@ -100,7 +100,8 @@ export default class TripPointsList extends Component {
    */
   showErrorMessage() {
     this._message = `Something went wrong. Check your connection or try again later`;
-    this.update();
+    this._messageElement.textContent = this._message;
+    this._messageElement.classList.remove(`visually-hidden`);
   }
 
   /**
@@ -108,7 +109,8 @@ export default class TripPointsList extends Component {
    */
   showLoadingMessage() {
     this._message = `Loading route...`;
-    this.update();
+    this._messageElement.textContent = this._message;
+    this._messageElement.classList.remove(`visually-hidden`);
   }
 
   /**
@@ -116,14 +118,15 @@ export default class TripPointsList extends Component {
    */
   hideMessage() {
     this._message = ``;
-    this.update();
+    this._messageElement.textContent = this._message;
+    this._messageElement.classList.add(`visually-hidden`);
   }
 
   createNewTripPoint() {
-    const data = TripPointsData.createEmptyTripPoint({
+    const data = TripPointsData.createEmpty({
       type: `taxi`,
-      dateFrom: getTripEndDate(this._tripPointsData.getTripPoints()),
-      dateTo: getTripEndDate(this._tripPointsData.getTripPoints()),
+      dateFrom: getTripEndDate(this._tripPointsData.getAll()),
+      dateTo: getTripEndDate(this._tripPointsData.getAll()),
       offers: this._availableOffersData.getOffers(`taxi`),
     });
 
@@ -136,17 +139,14 @@ export default class TripPointsList extends Component {
     // сохранение изменений
     this._newTripPointEdit.onSubmit = (newData) => {
       this._newTripPointEdit.savingBlock();
-      this._tripPointsData.addTripPoint(newData)
+      this._tripPointsData.add(newData)
         .then(() => {
           this._newTripPointEdit.unrender();
           this._newTripPointEdit = null;
           this.hideMessage();
         })
         .catch(() => {
-          this.showErrorMessage();
-          this._newTripPointEdit.shake();
-          this._newTripPointEdit.changesUnsaved();
-          this._newTripPointEdit.unblock();
+          this._showSavingError(this._newTripPointEdit);
         });
     };
 
@@ -170,11 +170,22 @@ export default class TripPointsList extends Component {
   }
 
   /**
+   * Действие при неудачном сохранении
+   * @param {*} tripPointEdit
+   */
+  _showSavingError(tripPointEdit) {
+    tripPointEdit.shake();
+    tripPointEdit.changesUnsaved();
+    tripPointEdit.unblock();
+    this.showErrorMessage();
+  }
+
+  /**
    * Вохвращает данные точек путешествия
    * @return {Array}
    */
   _getData() {
-    const data = this._tripPointsData.getTripPoints();
+    const data = this._tripPointsData.getAll();
     return data === null ? [] : data;
   }
 
@@ -249,7 +260,7 @@ export default class TripPointsList extends Component {
     };
 
     tripPoint.onAddOffer = (newData) => {
-      this._tripPointsData.updateTripPoint(newData)
+      this._tripPointsData.update(newData)
         .then(() => this.hideMessage())
         .catch(() => {
           this.showErrorMessage();
@@ -274,13 +285,10 @@ export default class TripPointsList extends Component {
     // сохранение изменений
     tripPointEdit.onSubmit = (newData) => {
       tripPointEdit.savingBlock();
-      this._tripPointsData.updateTripPoint(newData)
+      this._tripPointsData.update(newData)
         .then(() => this.hideMessage())
         .catch(() => {
-          this.showErrorMessage();
-          tripPointEdit.shake();
-          tripPointEdit.changesUnsaved();
-          tripPointEdit.unblock();
+          this._showSavingError(tripPointEdit);
         });
     };
 
@@ -295,12 +303,10 @@ export default class TripPointsList extends Component {
     // удаление точки путешествия
     tripPointEdit.onDelete = () => {
       tripPointEdit.deletingBlock();
-      this._tripPointsData.deleteTripPoint(data)
+      this._tripPointsData.delete(data)
         .then(() => this.hideMessage())
         .catch(() => {
-          this.showErrorMessage();
-          tripPointEdit.changesUnsaved();
-          tripPointEdit.unblock();
+          this._showSavingError(tripPointEdit);
         });
     };
     return tripPointEdit;

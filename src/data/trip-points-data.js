@@ -64,7 +64,7 @@ export default class TripPointsData {
    * Возвращает данные
    * @return {Array} - массив данных
    */
-  getTripPoints() {
+  getAll() {
     return this._data;
   }
 
@@ -73,7 +73,7 @@ export default class TripPointsData {
    * @param {Object} tripPointData - задача
    * @return {Promise} - промис
    */
-  addTripPoint(tripPointData) {
+  add(tripPointData) {
     const rawData = TripPointsData.toRAW(tripPointData);
     delete rawData.id;
     return this._provider.createResource({data: rawData})
@@ -90,14 +90,14 @@ export default class TripPointsData {
    * @param {Object} tripPointData - новые данные
    * @return {Promise} - промис
    */
-  updateTripPoint(tripPointData) {
+  update(tripPointData) {
     return this._provider.updateResource({
       id: tripPointData.id,
       data: TripPointsData.toRAW(tripPointData),
     })
       .then(TripPointsData.parseData)
       .then((updatedData) => {
-        const tripPointIndex = this._getTripPointIndexById(tripPointData.id);
+        const tripPointIndex = this._getIndexById(tripPointData.id);
         this._data[tripPointIndex] = updatedData;
         this._emitDataChange(`update`);
         return updatedData;
@@ -109,15 +109,15 @@ export default class TripPointsData {
    * @param {Object} data - данные точки путешествия
    * @return {Promise} - промис
    */
-  deleteTripPoint({id}) {
+  delete({id}) {
     return this._provider.deleteResource({id})
       .then(() => {
-        this._data.splice(this._getTripPointIndexById(id), 1);
+        this._data.splice(this._getIndexById(id), 1);
         this._emitDataChange(`delete`);
       });
   }
 
-  syncTripPoints() {
+  sync() {
     this._provider.syncResources();
   }
 
@@ -126,7 +126,7 @@ export default class TripPointsData {
    * @param {String} id - идентификатор
    * @return {Number} - индекс в массиве this._data
    */
-  _getTripPointIndexById(id) {
+  _getIndexById(id) {
     return this._data.findIndex((tripPoint) => id === tripPoint.id);
   }
 
@@ -143,7 +143,7 @@ export default class TripPointsData {
    * @param {Object} data - начальные данные
    * @return {Object} - данные точки путешествия
    */
-  static createEmptyTripPoint(data = {}) {
+  static createEmpty(data = {}) {
     data.id = data.id ? data.id : `0`;
     data.type = data.type ? data.type : `taxi`;
     data.destination = data.destination ? data.destination : {
