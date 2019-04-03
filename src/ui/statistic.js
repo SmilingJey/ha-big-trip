@@ -2,6 +2,7 @@ import Component from "./component.js";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import TripPointType from '../data/trip-point-type.js';
+import {calcTripPointCost} from '../utils/trip-utils.js';
 
 const BAR_HEIGHT = 55;
 
@@ -255,9 +256,9 @@ export default class Statistic extends Component {
     const moneyStatistic = {};
     for (const tripPoint of data) {
       if (moneyStatistic.hasOwnProperty(tripPoint.type)) {
-        moneyStatistic[tripPoint.type] += tripPoint.price;
+        moneyStatistic[tripPoint.type] += calcTripPointCost(tripPoint);
       } else {
-        moneyStatistic[tripPoint.type] = tripPoint.price;
+        moneyStatistic[tripPoint.type] = calcTripPointCost(tripPoint);
       }
     }
 
