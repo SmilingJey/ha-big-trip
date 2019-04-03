@@ -86,8 +86,7 @@ export default class TripPointEdit extends Component {
 
     this._flatpickrDateFrom = flatpickr(this._ui.dateStartElement, {
       enableTime: true,
-      // eslint-disable-next-line camelcase
-      time_24hr: true,
+      [`time_24hr`]: true,
       altInput: true,
       altFormat: `j M H:i`,
       dateFormat: `j M Y H:i`,
@@ -98,8 +97,7 @@ export default class TripPointEdit extends Component {
 
     this._flatpickrDateTo = flatpickr(this._ui.dateEndElement, {
       enableTime: true,
-      // eslint-disable-next-line camelcase
-      time_24hr: true,
+      [`time_24hr`]: true,
       altInput: true,
       altFormat: `j M H:i`,
       dateFormat: `j M Y H:i`,

@@ -169,14 +169,10 @@ export default class TripPointsData {
       [`id`]: data.id,
       [`type`]: data.type,
       [`destination`]: data.destination,
-      // eslint-disable-next-line camelcase
       [`date_from`]: data.dateFrom,
-      // eslint-disable-next-line camelcase
       [`date_to`]: data.dateTo,
-      // eslint-disable-next-line camelcase
       [`base_price`]: data.price,
       [`offers`]: data.offers,
-      // eslint-disable-next-line camelcase
       [`is_favorite`]: data.isFavorite,
     };
   }
