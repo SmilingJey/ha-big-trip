@@ -20,32 +20,31 @@ export default class OfflineProvider {
     if (this._isOnline()) {
       return this._api.getResources()
         .then(this._storeResources);
-    } else {
-      return Promise.resolve(this._store.getAllItems());
     }
+    return Promise.resolve(this._store.getAllItems());
   }
 
   createResource({data}) {
     if (this._isOnline()) {
       return this._api.createResource({data})
         .then(this._storeResource);
-    } else {
-      const id = this._generateId(data);
-      this._needSync = true;
-      this._store.setItem({key: id, data});
-      return Promise.resolve(data);
     }
+
+    const id = this._generateId(data);
+    this._needSync = true;
+    this._store.setItem({key: id, data});
+    return Promise.resolve(data);
   }
 
   updateResource({id, data}) {
     if (this._isOnline()) {
       return this._api.updateResource({id, data})
         .then(this._storeItem);
-    } else {
-      this._needSync = true;
-      this._store.setItem({key: id, data});
-      return Promise.resolve(data);
     }
+
+    this._needSync = true;
+    this._store.setItem({key: id, data});
+    return Promise.resolve(data);
   }
 
   deleteResource({id}) {
@@ -54,11 +53,11 @@ export default class OfflineProvider {
         .then(() => {
           this._store.removeItem({id});
         });
-    } else {
-      this._needSync = true;
-      this._store.removeItem({key: id});
-      return Promise.resolve(true);
     }
+
+    this._needSync = true;
+    this._store.removeItem({key: id});
+    return Promise.resolve(true);
   }
 
   syncResources() {

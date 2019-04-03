@@ -9,7 +9,7 @@ const AVAILABLE_OFFRES_RESOURSE = `offers`;
  */
 export default class AvailableOffersData {
   constructor({END_POINT, AUTHORIZATION}) {
-    this._data = null;
+    this._data = [];
     this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,

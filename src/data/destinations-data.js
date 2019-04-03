@@ -9,7 +9,7 @@ const DESTINATION_RESOURSE = `destinations`;
  */
 export default class DestinationsData {
   constructor({END_POINT, AUTHORIZATION}) {
-    this._data = null;
+    this._data = [];
     this._api = new ServerAPI({
       endPoint: END_POINT,
       authorization: AUTHORIZATION,
@@ -55,7 +55,7 @@ export default class DestinationsData {
    * Возвращает имена точек назначения
    * @return {Array} - массив с именами точек назначения
    */
-  getDestinations() {
+  getDestinationsNames() {
     return this._data.map((destination) => destination.name);
   }
 }

@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css?family=Montserrat:500,600,700,800,900&amp;subset=cyrillic-ext" rel="stylesheet">
   <link rel="stylesheet" type="text/css" media="screen" href="./css/normalize.css" />
   <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="./css/flatpickr.min.css">
 </head>
 <body>
 
@@ -243,7 +243,12 @@
   <p class="trip__total">Total: <span class="trip__total-cost">&euro;&nbsp;1500</span></p>
 </template>
 
-
 <script src="bundle.js"></script>
+<script>
+  navigator.serviceWorker.register(`./sw.js`)
+    .catch(function(error) {
+      console.log(`Registration failed with ${error}`);
+    });
+</script>
 </body>
 </html>

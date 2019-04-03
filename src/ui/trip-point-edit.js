@@ -127,7 +127,6 @@ export default class TripPointEdit extends Component {
     }
   }
 
-
   /**
    * Потрясти карточку
    */
@@ -161,7 +160,20 @@ export default class TripPointEdit extends Component {
   unblock() {
     this._ui.saveButtonElement.textContent = `Save`;
     this._ui.deleteButtonElement.textContent = `Delete`;
-    this.setInputBlock(false);
+    this._setInputBlock(false);
+  }
+
+  /**
+   * Выход из режима редактирования
+   */
+  cancelEdit() {
+    if (typeof this._onCancel === `function`) {
+      this._onCancel();
+    }
+  }
+
+  changesUnsaved() {
+    this._element.classList.add(`unsaved`);
   }
 
   /**
@@ -173,10 +185,6 @@ export default class TripPointEdit extends Component {
     for (const controlElement of controlElements) {
       controlElement.disabled = isBlock;
     }
-  }
-
-  changesUnsaved() {
-    this._element.classList.add(`unsaved`);
   }
 
   _getUiElements() {
@@ -221,7 +229,7 @@ export default class TripPointEdit extends Component {
    */
   _updateDestinationsDatalist() {
     removeChilds(this._ui.datalistElement);
-    const destinations = this._destinationsData.getDestinations();
+    const destinations = this._destinationsData.getDestinationsNames();
     if (destinations) {
       const optionsElements = destinations.map((destination) => {
         const optionsElement = document.createElement(`option`);
@@ -320,7 +328,7 @@ export default class TripPointEdit extends Component {
    */
   _createDestinationImage(image) {
     const imageElement = document.createElement(`img`);
-    imageElement.src = image.src;
+    imageElement.src = image.src.replace(/^http:/, ``);
     imageElement.alt = image.description;
     imageElement.classList.add(`point__destination-image`);
     return imageElement;
@@ -387,15 +395,6 @@ export default class TripPointEdit extends Component {
     evt.preventDefault();
     if (typeof this._onDelete === `function`) {
       this._onDelete();
-    }
-  }
-
-  /**
-   * Выход из режима редактирования
-   */
-  cancelEdit() {
-    if (typeof this._onCancel === `function`) {
-      this._onCancel();
     }
   }
 
