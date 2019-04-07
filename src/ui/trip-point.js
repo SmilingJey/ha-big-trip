@@ -99,7 +99,7 @@ export default class TripPoint extends Component {
    * Задает время начала, окончания и длительность события
    */
   _updateTime() {
-    const startDateText = moment(this._data.dateFrom).format(`D MMM H:mm`);
+    const startDateText = moment(this._data.dateFrom).format(`H:mm`);
     const hasEndDate = this._data.dateTo && (this._data.dateFrom - this._data.dateTo);
     const isSameDay = moment(this._data.dateFrom).isSame(this._data.dateTo, `day`);
     const endDateFormat = isSameDay ? `H:mm` : `D MMM H:mm`;
