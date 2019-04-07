@@ -238,6 +238,14 @@ export default class Statistic extends Component {
     this._updateTimeSpentChart(data);
   }
 
+  hide() {
+    this._element.classList.add(`visually-hidden`);
+  }
+
+  unhide() {
+    this._element.classList.remove(`visually-hidden`);
+  }
+
   _getUiElements() {
     this._ui.moneyCanvasElement = this._element.querySelector(`.statistic__money`);
     this._ui.transportCanvasElement = this._element.querySelector(`.statistic__transport`);
