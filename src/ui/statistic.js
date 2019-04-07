@@ -261,26 +261,12 @@ export default class Statistic extends Component {
       this._moneyChart = new Chart(this._ui.moneyCanvasElement, moneyChartConfig);
     }
 
-    const moneyStatistic = {};
-    for (const tripPoint of data) {
-      if (moneyStatistic.hasOwnProperty(tripPoint.type)) {
-        moneyStatistic[tripPoint.type] += calcTripPointCost(tripPoint);
-      } else {
-        moneyStatistic[tripPoint.type] = calcTripPointCost(tripPoint);
-      }
-    }
-
-    const sortedKeys = Object.keys(moneyStatistic).sort((a, b) => {
-      return moneyStatistic[b] - moneyStatistic[a];
+    const moneyStatistic = Statistic._calcTimeSpentStatistic(data);
+    Statistic._updateChart({
+      canvas: this._ui.moneyCanvasElement,
+      chart: this._moneyChart,
+      data: Statistic._getChartData(moneyStatistic),
     });
-    const values = sortedKeys.map((type) => moneyStatistic[type]);
-    const labels = sortedKeys.map((type) => `${TripPointType[type].icon} ${TripPointType[type].name}`);
-
-    this._moneyChart.config.data.datasets[0].data = values;
-    this._moneyChart.data.labels = labels;
-    this._ui.moneyCanvasElement.height = BAR_HEIGHT * labels.length;
-    this._moneyChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
-    this._moneyChart.update();
   }
 
   /**
@@ -292,28 +278,12 @@ export default class Statistic extends Component {
       this._transportChart = new Chart(this._ui.transportCanvasElement, transportChartConfig);
     }
 
-    const transportStatistic = {};
-    const transportPoints = data.filter((tripPoint) => TripPointType[tripPoint.type].isTransport);
-
-    for (const tripPoint of transportPoints) {
-      if (transportStatistic.hasOwnProperty(tripPoint.type)) {
-        transportStatistic[tripPoint.type]++;
-      } else {
-        transportStatistic[tripPoint.type] = 1;
-      }
-    }
-
-    const sortedKeys = Object.keys(transportStatistic).sort((a, b) => {
-      return transportStatistic[b] - transportStatistic[a];
+    const transportStatistic = Statistic._calcTransportStatistic(data);
+    Statistic._updateChart({
+      canvas: this._ui.transportCanvasElement,
+      chart: this._transportChart,
+      data: Statistic._getChartData(transportStatistic),
     });
-    const values = sortedKeys.map((type) => transportStatistic[type]);
-    const labels = sortedKeys.map((type) => `${TripPointType[type].icon} ${TripPointType[type].name}`);
-
-    this._transportChart.config.data.datasets[0].data = values;
-    this._transportChart.data.labels = labels;
-    this._ui.transportCanvasElement.height = BAR_HEIGHT * labels.length;
-    this._transportChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
-    this._transportChart.update();
   }
 
   /**
@@ -325,8 +295,56 @@ export default class Statistic extends Component {
       this._timeSpentChart = new Chart(this._ui.timeSpentCanvasElement, timeSpentChartConfig);
     }
 
-    const timeSpentStatistic = {};
+    const timeSpentStatistic = Statistic._calcTimeSpentStatistic(data);
+    Statistic._updateChart({
+      canvas: this._ui.timeSpentCanvasElement,
+      chart: this._timeSpentChart,
+      data: Statistic._getChartData(timeSpentStatistic),
+    });
+  }
 
+  /**
+   * Вычисление статистики по использованию транспорта
+   * @param {Array} data - данные путешествия
+   * @return {Object}
+   */
+  static _calcTransportStatistic(data) {
+    const transportStatistic = {};
+    const transportPoints = data.filter((tripPoint) => TripPointType[tripPoint.type].isTransport);
+    for (const tripPoint of transportPoints) {
+      if (transportStatistic.hasOwnProperty(tripPoint.type)) {
+        transportStatistic[tripPoint.type]++;
+      } else {
+        transportStatistic[tripPoint.type] = 1;
+      }
+    }
+    return transportStatistic;
+  }
+
+  /**
+   * Вычисление статистики по стоимости типов точек путешествия
+   * @param {Array} data - данные путешествия
+   * @return {Object}
+   */
+  static _calcMoneyStatistic(data) {
+    const moneyStatistic = {};
+    for (const tripPoint of data) {
+      if (moneyStatistic.hasOwnProperty(tripPoint.type)) {
+        moneyStatistic[tripPoint.type] += calcTripPointCost(tripPoint);
+      } else {
+        moneyStatistic[tripPoint.type] = calcTripPointCost(tripPoint);
+      }
+    }
+    return moneyStatistic;
+  }
+
+  /**
+   * Вычисление статистики по проведенному времени
+   * @param {Array} data - данные путешествия
+   * @return {Object}
+   */
+  static _calcTimeSpentStatistic(data) {
+    const timeSpentStatistic = {};
     for (const tripPoint of data) {
       if (timeSpentStatistic.hasOwnProperty(tripPoint.type)) {
         timeSpentStatistic[tripPoint.type] += Statistic._getDurationInMinutes(tripPoint);
@@ -334,18 +352,30 @@ export default class Statistic extends Component {
         timeSpentStatistic[tripPoint.type] = Statistic._getDurationInMinutes(tripPoint);
       }
     }
+    return timeSpentStatistic;
+  }
 
+  /**
+   * Возвращает данные для отображения на графике
+   * @param {*} timeSpentStatistic - статистика
+   * @return {Object}
+   */
+  static _getChartData(timeSpentStatistic) {
     const sortedKeys = Object.keys(timeSpentStatistic).sort((a, b) => {
       return timeSpentStatistic[b] - timeSpentStatistic[a];
     });
-    const values = sortedKeys.map((type) => timeSpentStatistic[type]);
-    const labels = sortedKeys.map((type) => `${TripPointType[type].icon} ${TripPointType[type].name}`);
+    return {
+      values: sortedKeys.map((type) => timeSpentStatistic[type]),
+      labels: sortedKeys.map((type) => `${TripPointType[type].icon} ${TripPointType[type].name}`),
+    };
+  }
 
-    this._timeSpentChart.config.data.datasets[0].data = values;
-    this._timeSpentChart.data.labels = labels;
-    this._ui.timeSpentCanvasElement.height = BAR_HEIGHT * labels.length;
-    this._timeSpentChart.canvas.parentNode.style.height = `${BAR_HEIGHT * labels.length}px`;
-    this._timeSpentChart.update();
+  static _updateChart({canvas, chart, data}) {
+    chart.config.data.datasets[0].data = data.values;
+    chart.data.labels = data.labels;
+    canvas.height = BAR_HEIGHT * data.labels.length;
+    chart.canvas.parentNode.style.height = `${BAR_HEIGHT * data.labels.length}px`;
+    chart.update();
   }
 
   static _getDurationInMinutes(tripPoint) {

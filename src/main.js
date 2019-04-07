@@ -41,7 +41,7 @@ tripPointsData.addListener(filtersList.update.bind(filtersList));
 // создание компонента статистики
 const statistic = new Statistic(tripPointsData.getAll.bind(tripPointsData));
 document.querySelector(`body`).appendChild(statistic.render());
-statistic.element.classList.add(`visually-hidden`);
+statistic.hide();
 tripPointsData.addListener(statistic.update.bind(statistic));
 
 // создание заголовка с точками путешествия

@@ -83,29 +83,7 @@ export default class TripPointEdit extends Component {
     this._ui.typeSelectElement.addEventListener(`click`, this._onSelectTripPointTypeClick);
     this._ui.destinationInputElement.addEventListener(`change`, this._onDestinationChange);
     this._ui.destinationInputElement.addEventListener(`keyup`, this._onDestinationKeyUp);
-
-    this._flatpickrDateFrom = flatpickr(this._ui.dateStartElement, {
-      enableTime: true,
-      [`time_24hr`]: true,
-      altInput: true,
-      altFormat: `j M H:i`,
-      dateFormat: `j M Y H:i`,
-      defaultDate: [
-        moment(this._data.dateFrom).format(`D MMM YYYY H:mm`),
-      ],
-    });
-
-    this._flatpickrDateTo = flatpickr(this._ui.dateEndElement, {
-      enableTime: true,
-      [`time_24hr`]: true,
-      altInput: true,
-      altFormat: `j M H:i`,
-      dateFormat: `j M Y H:i`,
-      defaultDate: [
-        moment(this._data.dateTo).format(`D MMM YYYY H:mm`),
-      ],
-    });
-
+    this._createFlatpickrs();
     document.addEventListener(`keydown`, this._onESCkeydown);
   }
 
@@ -205,6 +183,33 @@ export default class TripPointEdit extends Component {
   }
 
   /**
+   * Настройка выбора дат
+   */
+  _createFlatpickrs() {
+    this._flatpickrDateFrom = flatpickr(this._ui.dateStartElement, {
+      enableTime: true,
+      [`time_24hr`]: true,
+      altInput: true,
+      altFormat: `j M H:i`,
+      dateFormat: `j M Y H:i`,
+      defaultDate: [
+        moment(this._data.dateFrom).format(`D MMM YYYY H:mm`),
+      ],
+    });
+
+    this._flatpickrDateTo = flatpickr(this._ui.dateEndElement, {
+      enableTime: true,
+      [`time_24hr`]: true,
+      altInput: true,
+      altFormat: `j M H:i`,
+      dateFormat: `j M Y H:i`,
+      defaultDate: [
+        moment(this._data.dateTo).format(`D MMM YYYY H:mm`),
+      ],
+    });
+  }
+
+  /**
    * Задает тип события
    * @param {String} type - тип
    */
@@ -286,12 +291,9 @@ export default class TripPointEdit extends Component {
     inputElement.id = uniqueId;
     inputElement.value = offer.title;
     inputElement.checked = offer.accepted;
-    const labelElement = offerElement.querySelector(`.point__offers-label`);
-    labelElement.htmlFor = uniqueId;
-    const nameElement = offerElement.querySelector(`.point__offer-service`);
-    nameElement.textContent = offer.title;
-    const priceElement = offerElement.querySelector(`.point__offer-price`);
-    priceElement.textContent = offer.price;
+    offerElement.querySelector(`.point__offers-label`).htmlFor = uniqueId;
+    offerElement.querySelector(`.point__offer-service`).textContent = offer.title;
+    offerElement.querySelector(`.point__offer-price`).textContent = offer.price;
     return offerElement;
   }
 
@@ -364,7 +366,6 @@ export default class TripPointEdit extends Component {
     newData.dateTo = moment(formData.get(`date-end`), `D MMM YYYY H:mm`).toDate().getTime();
     newData.price = parseFloat(formData.get(`price`));
     newData.isFavorite = formData.get(`favorite`) === `on`;
-
     newData.offers = this._data.offers.map((offer) => {
       offer.accepted = formData.getAll(`offer`).includes(offer.title);
       return offer;
