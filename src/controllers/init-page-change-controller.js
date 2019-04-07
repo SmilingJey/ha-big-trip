@@ -3,7 +3,7 @@
  * Переключение между страницами
  * @param {Object} config
  */
-function initPageChangeController(config) {
+export default function initPageChangeController(config) {
   config.statisticLinkElement.addEventListener(`click`, (evt) => {
     config.tripTableElement.classList.remove(`view-switch__item--active`);
     config.statisticLinkElement.classList.add(`view-switch__item--active`);
@@ -23,5 +23,3 @@ function initPageChangeController(config) {
     evt.preventDefault();
   });
 }
-
-export {initPageChangeController};

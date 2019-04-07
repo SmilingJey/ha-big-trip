@@ -1,10 +1,10 @@
 import Component from './component.js';
 import * as moment from 'moment';
-import {removeChilds} from '../utils/dom-utils.js';
+import removeChilds from '../utils/remove-childs.js';
 import TripPointType from '../data/trip-point-type.js';
 import flatpickr from "flatpickr";
-import {deepCopyData} from '../utils/data-utils.js';
-import {debounce} from '../utils/events-utils.js';
+import deepCopyData from '../utils/deep-copy-data.js';
+import debounce from '../utils/debounce.js';
 
 /**
  * Класс описывает точку путешествия в режиме редактирования

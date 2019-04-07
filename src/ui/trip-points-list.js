@@ -1,10 +1,12 @@
 import Component from './component.js';
 import * as moment from 'moment';
-import {removeChilds} from '../utils/dom-utils.js';
-import {calcDaysDiff, compareDate} from '../utils/date-utils.js';
+import removeChilds from '../utils/remove-childs.js';
+import calcDaysDiff from '../utils/calc-days-diff.js';
+import compareDate from '../utils/compare-date.js';
 import TripPoint from './trip-point.js';
 import TripPointEdit from './trip-point-edit.js';
-import {getTripStartDate, getTripEndDate} from '../utils/trip-utils.js';
+import getTripStartDate from '../utils/get-trip-start-date.js';
+import getTripEndDate from '../utils/get-trip-end-date.js';
 import TripPointsData from '../data/trip-points-data.js';
 
 /**

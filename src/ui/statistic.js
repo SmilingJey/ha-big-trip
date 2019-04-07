@@ -2,7 +2,7 @@ import Component from "./component.js";
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import TripPointType from '../data/trip-point-type.js';
-import {calcTripPointCost} from '../utils/trip-utils.js';
+import calcTripPointCost from '../utils/calc-trippoint-cost.js';
 
 const BAR_HEIGHT = 55;
 

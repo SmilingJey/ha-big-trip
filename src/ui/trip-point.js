@@ -1,10 +1,10 @@
 import Component from './component.js';
 import * as moment from 'moment';
-import {removeChilds} from '../utils/dom-utils.js';
+import removeChilds from '../utils/remove-childs.js';
 import TripPointType from '../data/trip-point-type.js';
-import {deepCopyData} from '../utils/data-utils.js';
-import {calcDurationString} from '../utils/date-utils.js';
-import {calcTripPointCost} from '../utils/trip-utils.js';
+import deepCopyData from '../utils/deep-copy-data.js';
+import calcDurationString from '../utils/calc-duration-string.js';
+import calcTripPointCost from '../utils/calc-trippoint-cost.js';
 
 /**
  * Описывает точку путешествия в режиме отображения в списке

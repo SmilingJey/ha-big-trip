@@ -1,8 +1,9 @@
 
 import Component from './component.js';
 import * as moment from 'moment';
-import {compareDate} from '../utils/date-utils.js';
-import {getTripStartDate, getTripEndDate} from '../utils/trip-utils.js';
+import compareDate from '../utils/compare-date.js';
+import getTripStartDate from '../utils/get-trip-start-date.js';
+import getTripEndDate from '../utils/get-trip-end-date.js';
 
 /**
  * Компонент отображает путь и дату путешестия

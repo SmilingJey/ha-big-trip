@@ -6,9 +6,9 @@ import TotalCost from './ui/total-cost.js';
 import DestinationsData from './data/destinations-data.js';
 import AvailableOffersData from './data/available-offers-data.js';
 import TripPointsData from './data/trip-points-data.js';
-import {initOfflineController} from './controllers/offline-controller.js';
-import {initTripSortContrloller} from './controllers/trip-sort-controller.js';
-import {initPageChangeController} from './controllers/page-change-controller.js';
+import initOfflineController from './controllers/init-offline-controller.js';
+import initTripSortContrloller from './controllers/init-trip-sort-contrloller.js';
+import initPageChangeController from './controllers/init-page-change-controller.js';
 
 const ServerConfig = {
   AUTHORIZATION: `Basic smilingjey9`,
