@@ -1,9 +1,9 @@
 import Component from './component.js';
-import {calcTripPointCost} from '../utils/trip-utils.js';
+import calcTripPointCost from '../utils/calc-trippoint-cost.js';
+
 /**
  * Описывает компонент, отображающий полную стоимость путешествия
  */
-
 export default class TotalCost extends Component {
   constructor(getDataCallback) {
     super();

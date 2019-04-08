@@ -4,8 +4,6 @@
  * @param {*} original
  * @return {*}
  */
-function deepCopyData(original) {
+export default function deepCopyData(original) {
   return JSON.parse(JSON.stringify(original));
 }
-
-export {deepCopyData};

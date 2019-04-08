@@ -4,7 +4,7 @@
  * @param {Number} interval - задержка вызова
  * @return {Function} - функция фильтрующая частый вызов
  */
-function debounce(cb, interval = 500) {
+export default function debounce(cb, interval = 500) {
   let lastTimeout = null;
 
   return function (...parameters) {
@@ -16,5 +16,3 @@ function debounce(cb, interval = 500) {
     }, interval);
   };
 }
-
-export {debounce};

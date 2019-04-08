@@ -1,10 +1,10 @@
 import Component from './component.js';
 import * as moment from 'moment';
-import {removeChilds} from '../utils/dom-utils.js';
+import removeChilds from '../utils/remove-childs.js';
 import TripPointType from '../data/trip-point-type.js';
-import {deepCopyData} from '../utils/data-utils.js';
-import {calcDurationString} from '../utils/date-utils.js';
-import {calcTripPointCost} from '../utils/trip-utils.js';
+import deepCopyData from '../utils/deep-copy-data.js';
+import calcDurationString from '../utils/calc-duration-string.js';
+import calcTripPointCost from '../utils/calc-trippoint-cost.js';
 
 /**
  * Описывает точку путешествия в режиме отображения в списке
@@ -99,7 +99,7 @@ export default class TripPoint extends Component {
    * Задает время начала, окончания и длительность события
    */
   _updateTime() {
-    const startDateText = moment(this._data.dateFrom).format(`D MMM H:mm`);
+    const startDateText = moment(this._data.dateFrom).format(`H:mm`);
     const hasEndDate = this._data.dateTo && (this._data.dateFrom - this._data.dateTo);
     const isSameDay = moment(this._data.dateFrom).isSame(this._data.dateTo, `day`);
     const endDateFormat = isSameDay ? `H:mm` : `D MMM H:mm`;

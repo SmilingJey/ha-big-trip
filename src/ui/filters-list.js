@@ -59,6 +59,14 @@ export default class FilterList extends Component {
     this._element.appendChild(filtersFragment);
   }
 
+  hide() {
+    this._element.style.visibility = `hidden`;
+  }
+
+  unhide() {
+    this._element.style.visibility = `visible`;
+  }
+
   unrender() {
     for (const filter of this._filters) {
       filter.unrender();

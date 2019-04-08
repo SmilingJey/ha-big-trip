@@ -2,7 +2,7 @@
  * Переключение между online и offline режимами работы
  * @param {Object} param0
  */
-function initOfflineController({tripPointsData}) {
+export default function initOfflineController({tripPointsData}) {
   window.addEventListener(`offline`, () => {
     document.title = `${document.title} [OFFLINE]`;
   });
@@ -12,5 +12,3 @@ function initOfflineController({tripPointsData}) {
     tripPointsData.sync();
   });
 }
-
-export {initOfflineController};
