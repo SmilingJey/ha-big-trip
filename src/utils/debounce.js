@@ -4,7 +4,9 @@
  * @param {Number} interval - задержка вызова
  * @return {Function} - функция фильтрующая частый вызов
  */
-export default function debounce(cb, interval = 500) {
+const DEFAULT_DEBOUNCE_TIME = 500;
+
+export default function debounce(cb, interval = DEFAULT_DEBOUNCE_TIME) {
   let lastTimeout = null;
 
   return function (...parameters) {

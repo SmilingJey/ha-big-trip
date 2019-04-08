@@ -1,6 +1,7 @@
 import Component from './component.js';
 import calcTripPointCost from '../utils/calc-trippoint-cost.js';
 
+const NO_DATA_TEXT = `---`;
 /**
  * Описывает компонент, отображающий полную стоимость путешествия
  */
@@ -31,7 +32,7 @@ export default class TotalCost extends Component {
   _calcTotalCost() {
     const data = this._getDataCallback();
     if (!data) {
-      return `---`;
+      return NO_DATA_TEXT;
     }
 
     return data.reduce((cost, tripPoint) => {

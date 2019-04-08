@@ -3,6 +3,7 @@ import OfflineStore from './offline-store.js';
 import OfflineProvider from './offline-provider.js';
 
 const DESTINATION_RESOURSE = `destinations`;
+const NO_DESCRIPTION_TEXT = `No descrition for this destination`;
 
 /**
  * Отвечает за загрузку и хранение точек назначения
@@ -46,7 +47,7 @@ export default class DestinationsData {
     const findingResult = this._data.find((destination) => destination.name === destinationName);
     return findingResult ? findingResult : {
       name: destinationName,
-      description: `No descrition for this destination`,
+      description: NO_DESCRIPTION_TEXT,
       pictures: [],
     };
   }

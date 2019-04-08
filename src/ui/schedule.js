@@ -5,6 +5,9 @@ import compareDate from '../utils/compare-date.js';
 import getTripStartDate from '../utils/get-trip-start-date.js';
 import getTripEndDate from '../utils/get-trip-end-date.js';
 
+const TRIP_DATE_FORMAT = `MMM D`;
+const NO_DATA_TEXT = `No trip points yet`;
+
 /**
  * Компонент отображает путь и дату путешестия
  */
@@ -24,7 +27,7 @@ export default class Schedule extends Component {
     const tripPoints = this._getDataCallback();
     const noPoints = !tripPoints || tripPoints.length === 0;
 
-    this._ui.pointsElement.textContent = noPoints ? `No trip points yet` : Schedule._getPoints(tripPoints);
+    this._ui.pointsElement.textContent = noPoints ? NO_DATA_TEXT : Schedule._getPoints(tripPoints);
     this._ui.datesElement.textContent = noPoints ? `` : Schedule._getDates(tripPoints);
   }
 
@@ -60,8 +63,8 @@ export default class Schedule extends Component {
    * @return {String}
    */
   static _getDates(tripPoints) {
-    const startData = moment(getTripStartDate(tripPoints)).format(`MMM D`);
-    const endData = moment(getTripEndDate(tripPoints)).format(`MMM D`);
+    const startData = moment(getTripStartDate(tripPoints)).format(TRIP_DATE_FORMAT);
+    const endData = moment(getTripEndDate(tripPoints)).format(TRIP_DATE_FORMAT);
     return `${startData} - ${endData}`;
   }
 }

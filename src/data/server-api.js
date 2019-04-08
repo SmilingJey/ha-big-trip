@@ -5,6 +5,9 @@ const Method = {
   DELETE: `DELETE`
 };
 
+const HTTP_OK = 200;
+const HTTP_REDIRECTION = 300;
+
 export default class ServerAPI {
   constructor({endPoint, authorization, resourceName}) {
     this._endPoint = endPoint;
@@ -61,7 +64,7 @@ export default class ServerAPI {
   }
 
   static checkStatus(response) {
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status >= HTTP_OK && response.status < HTTP_REDIRECTION) {
       return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);

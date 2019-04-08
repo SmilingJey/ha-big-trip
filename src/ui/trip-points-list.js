@@ -32,8 +32,10 @@ export default class TripPointsList extends Component {
    * @param {Function} fn - функция сравнения точек для использования sort
    */
   set sortFunction(fn) {
-    this._sortFunction = fn;
-    this.update();
+    if (fn !== this._sortFunction) {
+      this._sortFunction = fn;
+      this.update();
+    }
   }
 
   /**
@@ -41,8 +43,10 @@ export default class TripPointsList extends Component {
    * @param {Function} fn - функция фильтрации точек для использования filter
    */
   set filterFunction(fn) {
-    this._filterFunction = fn;
-    this.update();
+    if (fn !== this._filterFunction) {
+      this._filterFunction = fn;
+      this.update();
+    }
   }
 
   /**

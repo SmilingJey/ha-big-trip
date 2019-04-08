@@ -261,7 +261,7 @@ export default class Statistic extends Component {
       this._moneyChart = new Chart(this._ui.moneyCanvasElement, moneyChartConfig);
     }
 
-    const moneyStatistic = Statistic._calcTimeSpentStatistic(data);
+    const moneyStatistic = Statistic._calcMoneyStatistic(data);
     Statistic._updateChart({
       canvas: this._ui.moneyCanvasElement,
       chart: this._moneyChart,
@@ -379,7 +379,8 @@ export default class Statistic extends Component {
   }
 
   static _getDurationInMinutes(tripPoint) {
-    return Math.round(Math.abs(tripPoint.dateTo - tripPoint.dateFrom) / 60 / 1000);
+    const MSEC_IN_MINUTE = 60 * 1000;
+    return Math.round(Math.abs(tripPoint.dateTo - tripPoint.dateFrom) / MSEC_IN_MINUTE);
   }
 }
 

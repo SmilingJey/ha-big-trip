@@ -4,6 +4,12 @@ import OfflineProvider from './offline-provider.js';
 
 const TRIP_POINTS_RESOURSE = `points`;
 
+const NEW_POINT_DESTINATION = {
+  name: `New point`,
+  description: `No descrition for this destination`,
+  pictures: [],
+};
+
 /**
  * Класс содержит данные точек путешествия
  */
@@ -146,11 +152,7 @@ export default class TripPointsData {
   static createEmpty(data = {}) {
     data.id = data.id ? data.id : `0`;
     data.type = data.type ? data.type : `taxi`;
-    data.destination = data.destination ? data.destination : {
-      name: `New point`,
-      description: `No descrition for this destination`,
-      pictures: [],
-    };
+    data.destination = data.destination ? data.destination : NEW_POINT_DESTINATION;
     data.dateFrom = data.dateFrom ? data.dateFrom : Date.now();
     data.dateTo = data.dateTo ? data.dateTo : Date.now();
     data.price = data.price ? data.price : 20;

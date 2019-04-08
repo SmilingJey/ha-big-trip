@@ -16,6 +16,8 @@ const FiltersData = [
   }
 ];
 
+const DEFAULT_FILTER = `Everything`;
+
 /**
  * Компонент отображает список фильтров
  */
@@ -25,7 +27,7 @@ export default class FilterList extends Component {
     this._filters = [];
     this._onFilter = null;
     this._getDataCallback = getDataCallback;
-    this._activeFilterName = `Everything`;
+    this._activeFilterName = DEFAULT_FILTER;
   }
 
   /**

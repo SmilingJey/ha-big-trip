@@ -6,6 +6,10 @@ import deepCopyData from '../utils/deep-copy-data.js';
 import calcDurationString from '../utils/calc-duration-string.js';
 import calcTripPointCost from '../utils/calc-trippoint-cost.js';
 
+const START_DATE_FORMAT = `H:mm`;
+const END_DATE_FORMAT = `H:mm`;
+const LONG_END_DATE_FORMAT = `D MMM H:mm`;
+
 /**
  * Описывает точку путешествия в режиме отображения в списке
  */
@@ -99,10 +103,10 @@ export default class TripPoint extends Component {
    * Задает время начала, окончания и длительность события
    */
   _updateTime() {
-    const startDateText = moment(this._data.dateFrom).format(`H:mm`);
+    const startDateText = moment(this._data.dateFrom).format(START_DATE_FORMAT);
     const hasEndDate = this._data.dateTo && (this._data.dateFrom - this._data.dateTo);
     const isSameDay = moment(this._data.dateFrom).isSame(this._data.dateTo, `day`);
-    const endDateFormat = isSameDay ? `H:mm` : `D MMM H:mm`;
+    const endDateFormat = isSameDay ? END_DATE_FORMAT : LONG_END_DATE_FORMAT;
     const endDateText = hasEndDate ? ` - ` + moment(this._data.dateTo).format(endDateFormat) : ``;
     this._ui.timeElement.textContent = `${startDateText}${endDateText}`;
     this._ui.durationElement.textContent = calcDurationString(this._data.dateFrom, this._data.dateTo);

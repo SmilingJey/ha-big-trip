@@ -6,6 +6,16 @@ import flatpickr from "flatpickr";
 import deepCopyData from '../utils/deep-copy-data.js';
 import debounce from '../utils/debounce.js';
 
+const INPUT_DATE_FORMAT = `D MMM H:mm`;
+const FLATPIKR_ALT_DATE_FORMAT = `j M H:i`;
+const FLATPIKR_DATE_FORMAT = `j M Y H:i`;
+const FLATPIKR_DATE_FORMAT_FOR_MOMENT = `D MMM YYYY H:mm`;
+const NO_OFFERS_TEXT = `No avaliable offres`;
+const SAVE_BUTTON_TEXT = `Save`;
+const SAVING_BUTTON_TEXT = `saving ...`;
+const DELETE_BUTTON_TEXT = `Delete`;
+const DELETING_BUTTON_TEXT = `deleting ...`;
+
 /**
  * Класс описывает точку путешествия в режиме редактирования
  */
@@ -118,7 +128,7 @@ export default class TripPointEdit extends Component {
    * Блокировка карточки при сохранении
    */
   savingBlock() {
-    this._ui.saveButtonElement.textContent = `saving ...`;
+    this._ui.saveButtonElement.textContent = SAVING_BUTTON_TEXT;
     this._setInputBlock(true);
   }
 
@@ -126,7 +136,7 @@ export default class TripPointEdit extends Component {
    * Блокировка карточки при удалении
    */
   deletingBlock() {
-    this._ui.deleteButtonElement.textContent = `deleting ...`;
+    this._ui.deleteButtonElement.textContent = DELETING_BUTTON_TEXT;
     this._setInputBlock(true);
   }
 
@@ -134,8 +144,8 @@ export default class TripPointEdit extends Component {
    * Разблокировка карточки
    */
   unblock() {
-    this._ui.saveButtonElement.textContent = `Save`;
-    this._ui.deleteButtonElement.textContent = `Delete`;
+    this._ui.saveButtonElement.textContent = SAVE_BUTTON_TEXT;
+    this._ui.deleteButtonElement.textContent = DELETE_BUTTON_TEXT;
     this._setInputBlock(false);
   }
 
@@ -190,10 +200,10 @@ export default class TripPointEdit extends Component {
       enableTime: true,
       [`time_24hr`]: true,
       altInput: true,
-      altFormat: `j M H:i`,
-      dateFormat: `j M Y H:i`,
+      altFormat: FLATPIKR_ALT_DATE_FORMAT,
+      dateFormat: FLATPIKR_DATE_FORMAT,
       defaultDate: [
-        moment(this._data.dateFrom).format(`D MMM YYYY H:mm`),
+        moment(this._data.dateFrom).format(FLATPIKR_DATE_FORMAT_FOR_MOMENT),
       ],
     });
 
@@ -201,10 +211,10 @@ export default class TripPointEdit extends Component {
       enableTime: true,
       [`time_24hr`]: true,
       altInput: true,
-      altFormat: `j M H:i`,
-      dateFormat: `j M Y H:i`,
+      altFormat: FLATPIKR_ALT_DATE_FORMAT,
+      dateFormat: FLATPIKR_DATE_FORMAT,
       defaultDate: [
-        moment(this._data.dateTo).format(`D MMM YYYY H:mm`),
+        moment(this._data.dateTo).format(FLATPIKR_DATE_FORMAT_FOR_MOMENT),
       ],
     });
   }
@@ -239,7 +249,6 @@ export default class TripPointEdit extends Component {
         optionsElement.value = destination;
         return optionsElement;
       });
-
       for (const optionsElement of optionsElements) {
         this._ui.datalistElement.appendChild(optionsElement);
       }
@@ -250,8 +259,8 @@ export default class TripPointEdit extends Component {
    * Задает время начала и окончания события
    */
   _updateDate() {
-    this._ui.dateStartElement.value = moment(this._data.dateFrom).format(`D MMM H:mm`);
-    this._ui.dateEndElement.value = this._data.dateTo ? moment(this._data.dateTo).format(`D MMM H:mm`) : ``;
+    this._ui.dateStartElement.value = moment(this._data.dateFrom).format(INPUT_DATE_FORMAT);
+    this._ui.dateEndElement.value = this._data.dateTo ? moment(this._data.dateTo).format(INPUT_DATE_FORMAT) : ``;
   }
 
   /**
@@ -273,7 +282,7 @@ export default class TripPointEdit extends Component {
         this._ui.offersContainerElement.prepend(offerElement);
       }
     } else {
-      this._ui.offersContainerElement.textContent = `No avaliable offres`;
+      this._ui.offersContainerElement.textContent = NO_OFFERS_TEXT;
     }
   }
 
@@ -362,8 +371,8 @@ export default class TripPointEdit extends Component {
     const newData = deepCopyData(this._data);
     newData.type = formData.get(`travel-way`);
     newData.destination = this._destinationsData.getDescription(formData.get(`destination`));
-    newData.dateFrom = moment(formData.get(`date-start`), `D MMM YYYY H:mm`).toDate().getTime();
-    newData.dateTo = moment(formData.get(`date-end`), `D MMM YYYY H:mm`).toDate().getTime();
+    newData.dateFrom = moment(formData.get(`date-start`), FLATPIKR_DATE_FORMAT_FOR_MOMENT).toDate().getTime();
+    newData.dateTo = moment(formData.get(`date-end`), FLATPIKR_DATE_FORMAT_FOR_MOMENT).toDate().getTime();
     newData.price = parseFloat(formData.get(`price`));
     newData.isFavorite = formData.get(`favorite`) === `on`;
     newData.offers = this._data.offers.map((offer) => {
@@ -372,6 +381,7 @@ export default class TripPointEdit extends Component {
     });
     return newData;
   }
+
 
   /**
    * Обработчик события клика на кнопку сохранения точки путешествия
