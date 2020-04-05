@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Big Trip</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:500,600,700,800,900&amp;subset=cyrillic-ext" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" media="screen" href="./css/normalize.css" />
+  <link rel="stylesheet" type="text/css" media="screen" href="./css/main.css" />
+  <link rel="stylesheet" href="./css/flatpickr.min.css">
+</head>
+<body>
+
+<header class="header">
+  <div class="content-wrap header__wrap">
+    <section class="trip">
+    </section>
+
+    <section class="trip-controls">
+      <nav class="trip-controls__menus view-switch">
+        <a href="#table" class="view-switch__item view-switch__item--active">Table</a>
+        <a href="#stats" class="view-switch__item">Stats</a>
+      </nav>
+      <button class="trip-controls__new-event new-event">+ New Event</button>
+    </section>
+  </div>
+</header>
+
+<main class="main content-wrap" id="table">
+  <form class="trip-sorting">
+    <input type="radio" name="trip-sorting" id="sorting-day" value="day" checked>
+    <label class="trip-sorting__item trip-sorting__item--day" for="sorting-day">Day</label>
+
+    <input type="radio" name="trip-sorting" id="sorting-event" value="event">
+    <label class="trip-sorting__item trip-sorting__item--event" for="sorting-event">Event</label>
+
+    <input type="radio" name="trip-sorting" id="sorting-time" value="time">
+    <label class="trip-sorting__item trip-sorting__item--time" for="sorting-time">Time</label>
+
+    <input type="radio" name="trip-sorting" id="sorting-price" value="price">
+    <label class="trip-sorting__item trip-sorting__item--price" for="sorting-price">Price</label>
+
+    <span class="trip-sorting__item trip-sorting__item--offers">Offers</span>
+  </form>
+</main>
+
+<template id="filter-template">
+  <div class="trip-filter__container">
+    <input type="radio" id="filter-id" name="filter" value="id">
+    <label class="trip-filter__item" for="filter-id">Filter name</label>
+  </div>
+</template>
+
+<template id="trip-day-template">
+  <section class="trip-day">
+    <article class="trip-day__info">
+      <span class="trip-day__caption">Day</span>
+      <p class="trip-day__number">1</p>
+      <h2 class="trip-day__title">Mar 18</h2>
+    </article>
+    <div class="trip-day__items">
+    </div>
+  </section>
+</template>
+
+<template id="trip-point-template">
+  <article class="trip-point">
+    <i class="trip-icon">🚕</i>
+    <h3 class="trip-point__title">Taxi to Airport</h3>
+    <p class="trip-point__schedule">
+      <span class="trip-point__timetable">10:00&nbsp;&mdash; 11:00</span>
+      <span class="trip-point__duration">1h 30m</span>
+    </p>
+    <p class="trip-point__price">&euro;&nbsp;20</p>
+    <ul class="trip-point__offers">
+      <li>
+        <button class="trip-point__offer">Order UBER +&euro;&nbsp;20</button>
+      </li>
+      <li>
+        <button class="trip-point__offer">Upgrade to business +&euro;&nbsp;20</button>
+      </li>
+    </ul>
+  </article>
+</template>
+
+<template id="trip-point-offer-template">
+  <li>
+    <button class="trip-point__offer"></button>
+  </li>
+</template>
+
+<template id="trip-point-edit-template">
+  <article class="point">
+    <form action="" method="get">
+      <header class="point__header">
+        <div class="travel-way">
+          <label class="travel-way__label" for="travel-way__toggle">✈️</label>
+
+          <input type="checkbox" class="travel-way__toggle visually-hidden" id="travel-way__toggle">
+
+          <div class="travel-way__select">
+            <div class="travel-way__select-group">
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-taxi" name="travel-way" value="taxi">
+              <label class="travel-way__select-label" for="travel-way-taxi">🚕 taxi</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-bus" name="travel-way" value="bus">
+              <label class="travel-way__select-label" for="travel-way-bus">🚌 bus</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-train" name="travel-way" value="train">
+              <label class="travel-way__select-label" for="travel-way-train">🚂 train</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-flight" name="travel-way" value="flight" checked>
+              <label class="travel-way__select-label" for="travel-way-flight">✈️ flight</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-ship" name="travel-way" value="ship">
+              <label class="travel-way__select-label" for="travel-way-ship">🛳️ ship</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-transport" name="travel-way" value="transport">
+              <label class="travel-way__select-label" for="travel-way-transport">🚊 transport</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-drive" name="travel-way" value="drive">
+              <label class="travel-way__select-label" for="travel-way-drive">🚗 drive</label>
+            </div>
+
+            <div class="travel-way__select-group">
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-check-in" name="travel-way" value="check-in">
+              <label class="travel-way__select-label" for="travel-way-check-in">🏨 check-in</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-sightseeing" name="travel-way" value="sightseeing">
+              <label class="travel-way__select-label" for="travel-way-sightseeing">🏛 sightseeing</label>
+
+              <input class="travel-way__select-input visually-hidden" type="radio" id="travel-way-restaurant" name="travel-way" value="restaurant">
+              <label class="travel-way__select-label" for="travel-way-restaurant">🍴 restaurant</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="point__destination-wrap">
+          <label class="point__destination-label" for="destination">Flight to</label>
+          <input class="point__destination-input" list="destination-select" id="destination" value="Chamonix" name="destination">
+          <datalist id="destination-select">
+          </datalist>
+        </div>
+
+        <div class="point__time">
+          choose time
+          <input class="point__input point__input--date-start" type="text" value="19:00" name="date-start" placeholder="19:00">
+          <input class="point__input point__input--date-end" type="text" value="21:00" name="date-end" placeholder="21:00">
+        </div>
+
+        <label class="point__price">
+          write price
+          <span class="point__price-currency">€</span>
+          <input class="point__input" type="text" value="160" name="price">
+        </label>
+
+        <div class="point__buttons">
+          <button class="point__button point__button--save" type="submit">Save</button>
+          <button class="point__button" type="reset">Delete</button>
+        </div>
+
+        <div class="paint__favorite-wrap">
+          <input type="checkbox" class="point__favorite-input visually-hidden" id="favorite" name="favorite">
+          <label class="point__favorite" for="favorite">favorite</label>
+        </div>
+      </header>
+
+      <section class="point__details">
+        <section class="point__offers">
+          <h3 class="point__details-title">offers</h3>
+
+          <div class="point__offers-wrap">
+            <input class="point__offers-input visually-hidden" type="checkbox" id="add-luggage" name="offer" value="add-luggage">
+            <label for="add-luggage" class="point__offers-label">
+              <span class="point__offer-service">Add luggage</span> + €<span class="point__offer-price">30</span>
+            </label>
+
+            <input class="point__offers-input visually-hidden" type="checkbox" id="switch-to-comfort-class" name="offer" value="switch-to-comfort-class">
+            <label for="switch-to-comfort-class" class="point__offers-label">
+              <span class="point__offer-service">Switch to comfort class</span> + €<span class="point__offer-price">100</span>
+            </label>
+
+            <input class="point__offers-input visually-hidden" type="checkbox" id="add-meal" name="offer" value="add-meal">
+            <label for="add-meal" class="point__offers-label">
+              <span class="point__offer-service">Add meal </span> + €<span class="point__offer-price">15</span>
+            </label>
+
+            <input class="point__offers-input visually-hidden" type="checkbox" id="choose-seats" name="offer" value="choose-seats">
+            <label for="choose-seats" class="point__offers-label">
+              <span class="point__offer-service">Choose seats</span> + €<span class="point__offer-price">5</span>
+            </label>
+          </div>
+
+        </section>
+        <section class="point__destination">
+          <h3 class="point__details-title">Destination</h3>
+          <p class="point__destination-text">Geneva is a city in Switzerland that lies at the southern tip of expansive Lac Léman (Lake Geneva). Surrounded by the Alps and Jura mountains, the city has views of dramatic Mont Blanc.</p>
+          <div class="point__destination-images">
+            <img src="http://picsum.photos/330/140?r=123" alt="picture from place" class="point__destination-image">
+            <img src="http://picsum.photos/300/200?r=1234" alt="picture from place" class="point__destination-image">
+            <img src="http://picsum.photos/300/100?r=12345" alt="picture from place" class="point__destination-image">
+            <img src="http://picsum.photos/200/300?r=123456" alt="picture from place" class="point__destination-image">
+            <img src="http://picsum.photos/100/300?r=1234567" alt="picture from place" class="point__destination-image">
+          </div>
+        </section>
+        <input type="hidden" class="point__total-price" name="total-price" value="">
+      </section>
+    </form>
+  </article>
+</template>
+
+<template id="trip-point-edit-offer-template">
+  <input class="point__offers-input visually-hidden" type="checkbox" id="choose-seats1" name="offer" value="choose-seats">
+  <label for="choose-seats" class="point__offers-label">
+    <span class="point__offer-service">Choose seats</span> + €<span class="point__offer-price">5</span>
+  </label>
+</template>
+
+<template id="trip-statistic-template">
+  <section class="statistic content-wrap" id="stats">
+    <div class="statistic__item statistic__item--money">
+      <canvas class="statistic__money" width="900"></canvas>
+    </div>
+    <div class="statistic__item statistic__item--transport">
+      <canvas class="statistic__transport" width="900"></canvas>
+    </div>
+    <div class="statistic__item statistic__item--time-spend">
+      <canvas class="statistic__time-spend" width="900"></canvas>
+    </div>
+  </section>
+</template>
+
+<template id="trip-schedule-template">
+  <div class="trip__schedule">
+    <i class="trip-icon">⛰️</i>
+    <h1 class="trip__points">Amsterdam&nbsp;&mdash; Geneva&nbsp;&mdash;  Chamonix</h1>
+    <p class="trip__dates">Mar 17&nbsp;&mdash; 19</p>
+  </div>
+</template>
+
+<template id="total-cost-template">
+  <p class="trip__total">Total: <span class="trip__total-cost">&euro;&nbsp;1500</span></p>
+</template>
+
+<script src="bundle.js"></script>
+<script>
+  /*navigator.serviceWorker.register(`./sw.js`)
+    .catch(function(error) {
+      console.log(`Registration failed with ${error}`);
+    });*/
+</script>
+</body>
+</html>
