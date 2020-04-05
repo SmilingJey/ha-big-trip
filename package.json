@@ -6,8 +6,9 @@
   "scripts": {
     "eslint": "eslint src/**/*.js",
     "test": "npm run eslint",
-    "build": "webpack",
-    "start": "webpack-dev-server --open"
+    "build": "webpack --mode production",
+    "start": "webpack-dev-server --open",
+    "deploy": "gh-pages -d public"
   },
   "devDependencies": {
     "eslint": "5.13.0",

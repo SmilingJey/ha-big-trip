@@ -105,7 +105,7 @@ export default class TripPointsData {
   }
 
   /**
-   * Удаление точки путешествич
+   * Удаление точки путешествия
    * @param {Object} data - данные точки путешествия
    * @return {Promise} - промис
    */

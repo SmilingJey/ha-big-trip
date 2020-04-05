@@ -5,7 +5,7 @@
  */
 export default function initPageChangeController(config) {
   config.statisticLinkElement.addEventListener(`click`, (evt) => {
-    config.tripTableElement.classList.remove(`view-switch__item--active`);
+    config.tripTableLinkElement.classList.remove(`view-switch__item--active`);
     config.statisticLinkElement.classList.add(`view-switch__item--active`);
     config.tripTableElement.classList.add(`visually-hidden`);
     config.filtersList.hide();
@@ -15,7 +15,7 @@ export default function initPageChangeController(config) {
   });
 
   config.tripTableLinkElement.addEventListener(`click`, (evt) => {
-    config.tripTableElement.classList.add(`view-switch__item--active`);
+    config.tripTableLinkElement.classList.add(`view-switch__item--active`);
     config.statisticLinkElement.classList.remove(`view-switch__item--active`);
     config.tripTableElement.classList.remove(`visually-hidden`);
     config.statistic.hide();
